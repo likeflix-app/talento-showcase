@@ -1,12 +1,134 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Hero from "@/components/Hero";
+import TalentCarousel from "@/components/TalentCarousel";
+import Footer from "@/components/Footer";
+
+import talentSport1 from "@/assets/talent-sport-1.jpg";
+import talentFood1 from "@/assets/talent-food-1.jpg";
+import talentCinema1 from "@/assets/talent-cinema-1.jpg";
+import talentModa1 from "@/assets/talent-moda-1.jpg";
+import talentBusiness1 from "@/assets/talent-business-1.jpg";
+import talentWellness1 from "@/assets/talent-wellness-1.jpg";
 
 const Index = () => {
+  const premiumTalents = [
+    {
+      name: "Marco Rossi",
+      category: "Sport & Fitness",
+      price: "€150/h",
+      image: talentSport1,
+      description: "Ex atleta olimpico specializzato in preparazione atletica e coaching sportivo personalizzato.",
+      rating: 4.9
+    },
+    {
+      name: "Sofia Conti",
+      category: "Alta Cucina",
+      price: "€200/h",
+      image: talentFood1,
+      description: "Chef stellata con 15 anni di esperienza in cucina gourmet italiana e internazionale.",
+      rating: 5.0
+    },
+    {
+      name: "Luca Ferrari",
+      category: "Cinema & Regia",
+      price: "€180/h",
+      image: talentCinema1,
+      description: "Regista pluripremiato con esperienza in produzioni cinematografiche e documentari.",
+      rating: 4.8
+    },
+    {
+      name: "Giulia Marchetti",
+      category: "Fashion & Style",
+      price: "€175/h",
+      image: talentModa1,
+      description: "Fashion designer e stylist con esperienza nelle maggiori fashion week internazionali.",
+      rating: 4.9
+    },
+    {
+      name: "Alessandro Bianchi",
+      category: "Business Strategy",
+      price: "€250/h",
+      image: talentBusiness1,
+      description: "Consulente aziendale con track record di successi in startup e PMI italiane.",
+      rating: 5.0
+    },
+    {
+      name: "Elena Romano",
+      category: "Wellness & Yoga",
+      price: "€120/h",
+      image: talentWellness1,
+      description: "Insegnante certificata di yoga e meditazione, specializzata in tecniche di gestione dello stress.",
+      rating: 4.9
+    },
+  ];
+
+  const emergingTalents = [
+    {
+      name: "Davide Colombo",
+      category: "Personal Training",
+      price: "€80/h",
+      image: talentSport1,
+      description: "Personal trainer specializzato in allenamento funzionale e riabilitazione sportiva.",
+      rating: 4.7
+    },
+    {
+      name: "Francesca Verdi",
+      category: "Pasticceria",
+      price: "€90/h",
+      image: talentFood1,
+      description: "Pasticcera creativa specializzata in dolci moderni e cake design personalizzato.",
+      rating: 4.8
+    },
+    {
+      name: "Matteo Greco",
+      category: "Fotografia Cinema",
+      price: "€100/h",
+      image: talentCinema1,
+      description: "Direttore della fotografia emergente con occhio per la composizione artistica.",
+      rating: 4.6
+    },
+    {
+      name: "Valentina Ricci",
+      category: "Personal Shopper",
+      price: "€95/h",
+      image: talentModa1,
+      description: "Personal shopper e consulente d'immagine per privati e professionisti.",
+      rating: 4.7
+    },
+    {
+      name: "Simone Esposito",
+      category: "Digital Marketing",
+      price: "€110/h",
+      image: talentBusiness1,
+      description: "Esperto di marketing digitale e social media strategy per brand emergenti.",
+      rating: 4.8
+    },
+    {
+      name: "Chiara Fontana",
+      category: "Nutrizione",
+      price: "€85/h",
+      image: talentWellness1,
+      description: "Nutrizionista specializzata in alimentazione sportiva e piani personalizzati.",
+      rating: 4.7
+    },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background">
+      <Hero />
+      
+      <div id="consulenze" className="space-y-4">
+        <TalentCarousel 
+          title="Esperti Premium" 
+          talents={premiumTalents}
+        />
+        
+        <TalentCarousel 
+          title="Talenti Emergenti" 
+          talents={emergingTalents}
+        />
       </div>
+      
+      <Footer />
     </div>
   );
 };
