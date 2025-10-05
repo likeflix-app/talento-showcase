@@ -8,6 +8,10 @@ import talentCinema1 from "@/assets/talent-cinema-1.jpg";
 import talentModa1 from "@/assets/talent-moda-1.jpg";
 import talentBusiness1 from "@/assets/talent-business-1.jpg";
 import talentWellness1 from "@/assets/talent-wellness-1.jpg";
+import packageBusinessWellness from "@/assets/package-business-wellness.jpg";
+import packageFoodSport from "@/assets/package-food-sport.jpg";
+import packageModaCinema from "@/assets/package-moda-cinema.jpg";
+import packageComplete from "@/assets/package-complete.jpg";
 
 const Index = () => {
   const premiumTalents = [
@@ -112,11 +116,46 @@ const Index = () => {
     },
   ];
 
+  const optimizedPackages = [
+    {
+      name: "Pacchetto Business & Benessere",
+      category: "Business + Wellness",
+      price: "€890",
+      image: packageBusinessWellness,
+      description: "3 sessioni di consulenza aziendale + 3 sessioni di yoga e meditazione. Equilibrio perfetto tra successo professionale e benessere personale.",
+      rating: 5.0
+    },
+    {
+      name: "Pacchetto Lifestyle Salutare",
+      category: "Food + Sport",
+      price: "€750",
+      image: packageFoodSport,
+      description: "4 sessioni di coaching nutrizionale + 4 sessioni di personal training. Il tuo percorso completo verso uno stile di vita sano.",
+      rating: 4.9
+    },
+    {
+      name: "Pacchetto Immagine Totale",
+      category: "Moda + Cinema",
+      price: "€820",
+      image: packageModaCinema,
+      description: "2 sessioni di consulenza styling + servizio fotografico professionale. Crea la tua immagine distintiva con i migliori esperti.",
+      rating: 4.9
+    },
+    {
+      name: "Pacchetto Trasformazione Completa",
+      category: "Multi-disciplinare",
+      price: "€1.450",
+      image: packageComplete,
+      description: "Il pacchetto premium che combina business, wellness, food e sport. 10 sessioni per una trasformazione a 360 gradi della tua vita.",
+      rating: 5.0
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <Hero />
       
-      <div id="consulenze" className="space-y-4">
+      <div id="consulenze" className="space-y-2">
         <TalentCarousel 
           title="Esperti Premium" 
           talents={premiumTalents}
@@ -125,6 +164,11 @@ const Index = () => {
         <TalentCarousel 
           title="Talenti Emergenti" 
           talents={emergingTalents}
+        />
+
+        <TalentCarousel 
+          title="Pacchetti Ottimizzati" 
+          talents={optimizedPackages}
         />
       </div>
       

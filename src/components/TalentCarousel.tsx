@@ -21,8 +21,10 @@ interface TalentCarouselProps {
 const TalentCarousel = ({ title, talents }: TalentCarouselProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true, 
-    align: "start",
+    align: "center",
     slidesToScroll: 1,
+    containScroll: "trimSnaps",
+    duration: 25,
   });
 
   const scrollPrev = useCallback(() => {
@@ -34,16 +36,16 @@ const TalentCarousel = ({ title, talents }: TalentCarouselProps) => {
   }, [emblaApi]);
 
   return (
-    <div className="py-16">
+    <div className="py-12">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-4xl font-bold text-foreground">{title}</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground font-playfair italic">{title}</h2>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="icon"
               onClick={scrollPrev}
-              className="rounded-full hover:bg-accent hover:text-primary transition-colors"
+              className="rounded-full border-2 border-primary/20 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300"
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
@@ -51,17 +53,20 @@ const TalentCarousel = ({ title, talents }: TalentCarouselProps) => {
               variant="outline"
               size="icon"
               onClick={scrollNext}
-              className="rounded-full hover:bg-accent hover:text-primary transition-colors"
+              className="rounded-full border-2 border-primary/20 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300"
             >
               <ChevronRight className="h-5 w-5" />
             </Button>
           </div>
         </div>
 
-        <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex gap-4">
+        <div className="overflow-hidden -mx-4" ref={emblaRef}>
+          <div className="flex">
             {talents.map((talent, index) => (
-              <div key={index} className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] xl:flex-[0_0_25%]">
+              <div 
+                key={index} 
+                className="flex-[0_0_90%] min-w-0 px-4 sm:flex-[0_0_85%] md:flex-[0_0_45%] lg:flex-[0_0_33.333%] transition-all duration-500 ease-out"
+              >
                 <TalentCard {...talent} />
               </div>
             ))}
