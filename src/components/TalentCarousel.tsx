@@ -3,15 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCallback } from "react";
 import TalentCard from "./TalentCard";
-
-interface Talent {
-  name: string;
-  category: string;
-  price: string;
-  image: string;
-  description: string;
-  rating: number;
-}
+import { Talent } from "@/types/talent";
 
 interface TalentCarouselProps {
   title: string;
@@ -64,8 +56,8 @@ const TalentCarousel = ({ title, talents }: TalentCarouselProps) => {
           <div className="flex">
             {talents.map((talent, index) => (
               <div 
-                key={index} 
-                className="flex-[0_0_90%] min-w-0 px-4 sm:flex-[0_0_85%] md:flex-[0_0_45%] lg:flex-[0_0_33.333%] transition-all duration-500 ease-out"
+                key={talent.id || index} 
+                className="flex-[0_0_76.5%] min-w-0 px-4 sm:flex-[0_0_72.25%] md:flex-[0_0_38.25%] lg:flex-[0_0_28.33%] transition-all duration-500 ease-out"
               >
                 <TalentCard {...talent} />
               </div>

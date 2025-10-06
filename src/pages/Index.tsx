@@ -16,138 +16,202 @@ import packageComplete from "@/assets/package-complete.jpg";
 const Index = () => {
   const premiumTalents = [
     {
+      id: "premium-1",
       name: "Marco Rossi",
       category: "Sport & Fitness",
       price: "€150/h",
       image: talentSport1,
       description: "Ex atleta olimpico specializzato in preparazione atletica e coaching sportivo personalizzato.",
-      rating: 4.9
+      rating: 4.9,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "premium-2",
       name: "Sofia Conti",
       category: "Alta Cucina",
       price: "€200/h",
       image: talentFood1,
       description: "Chef stellata con 15 anni di esperienza in cucina gourmet italiana e internazionale.",
-      rating: 5.0
+      rating: 5.0,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "premium-3",
       name: "Luca Ferrari",
       category: "Cinema & Regia",
       price: "€180/h",
       image: talentCinema1,
       description: "Regista pluripremiato con esperienza in produzioni cinematografiche e documentari.",
-      rating: 4.8
+      rating: 4.8,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "premium-4",
       name: "Giulia Marchetti",
       category: "Fashion & Style",
       price: "€175/h",
       image: talentModa1,
       description: "Fashion designer e stylist con esperienza nelle maggiori fashion week internazionali.",
-      rating: 4.9
+      rating: 4.9,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "premium-5",
       name: "Alessandro Bianchi",
       category: "Business Strategy",
       price: "€250/h",
       image: talentBusiness1,
       description: "Consulente aziendale con track record di successi in startup e PMI italiane.",
-      rating: 5.0
+      rating: 5.0,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "premium-6",
       name: "Elena Romano",
       category: "Wellness & Yoga",
       price: "€120/h",
       image: talentWellness1,
       description: "Insegnante certificata di yoga e meditazione, specializzata in tecniche di gestione dello stress.",
-      rating: 4.9
+      rating: 4.9,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
   ];
 
   const emergingTalents = [
     {
+      id: "emerging-1",
       name: "Davide Colombo",
       category: "Personal Training",
       price: "€80/h",
       image: talentSport1,
       description: "Personal trainer specializzato in allenamento funzionale e riabilitazione sportiva.",
-      rating: 4.7
+      rating: 4.7,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "emerging-2",
       name: "Francesca Verdi",
       category: "Pasticceria",
       price: "€90/h",
       image: talentFood1,
       description: "Pasticcera creativa specializzata in dolci moderni e cake design personalizzato.",
-      rating: 4.8
+      rating: 4.8,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "emerging-3",
       name: "Matteo Greco",
       category: "Fotografia Cinema",
       price: "€100/h",
       image: talentCinema1,
       description: "Direttore della fotografia emergente con occhio per la composizione artistica.",
-      rating: 4.6
+      rating: 4.6,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "emerging-4",
       name: "Valentina Ricci",
       category: "Personal Shopper",
       price: "€95/h",
       image: talentModa1,
       description: "Personal shopper e consulente d'immagine per privati e professionisti.",
-      rating: 4.7
+      rating: 4.7,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "emerging-5",
       name: "Simone Esposito",
       category: "Digital Marketing",
       price: "€110/h",
       image: talentBusiness1,
       description: "Esperto di marketing digitale e social media strategy per brand emergenti.",
-      rating: 4.8
+      rating: 4.8,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "emerging-6",
       name: "Chiara Fontana",
       category: "Nutrizione",
       price: "€85/h",
       image: talentWellness1,
       description: "Nutrizionista specializzata in alimentazione sportiva e piani personalizzati.",
-      rating: 4.7
+      rating: 4.7,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
   ];
 
   const optimizedPackages = [
     {
+      id: "package-1",
       name: "Pacchetto Business & Benessere",
       category: "Business + Wellness",
       price: "€890",
       image: packageBusinessWellness,
       description: "3 sessioni di consulenza aziendale + 3 sessioni di yoga e meditazione. Equilibrio perfetto tra successo professionale e benessere personale.",
-      rating: 5.0
+      rating: 5.0,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "package-2",
       name: "Pacchetto Lifestyle Salutare",
       category: "Food + Sport",
       price: "€750",
       image: packageFoodSport,
       description: "4 sessioni di coaching nutrizionale + 4 sessioni di personal training. Il tuo percorso completo verso uno stile di vita sano.",
-      rating: 4.9
+      rating: 4.9,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "package-3",
       name: "Pacchetto Immagine Totale",
       category: "Moda + Cinema",
       price: "€820",
       image: packageModaCinema,
       description: "2 sessioni di consulenza styling + servizio fotografico professionale. Crea la tua immagine distintiva con i migliori esperti.",
-      rating: 4.9
+      rating: 4.9,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
     {
+      id: "package-4",
       name: "Pacchetto Trasformazione Completa",
       category: "Multi-disciplinare",
       price: "€1.450",
       image: packageComplete,
       description: "Il pacchetto premium che combina business, wellness, food e sport. 10 sessioni per una trasformazione a 360 gradi della tua vita.",
-      rating: 5.0
+      rating: 5.0,
+      isActive: true,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z"
     },
   ];
 
