@@ -35,6 +35,10 @@ export class EmailVerificationService {
     const token = generateVerificationToken();
     const expires = generateExpirationTime();
 
+    console.log('🔑 Generating token for user:', userId);
+    console.log('🎫 Generated token:', token);
+    console.log('⏰ Expires at:', expires);
+
     // Update user in localStorage
     const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
     const userIndex = allUsers.findIndex((u: User) => u.id === userId);
@@ -46,6 +50,9 @@ export class EmailVerificationService {
         emailVerificationExpires: expires,
       };
       localStorage.setItem('allUsers', JSON.stringify(allUsers));
+      console.log('✅ Updated user in allUsers array:', allUsers[userIndex]);
+    } else {
+      console.log('❌ User not found in allUsers array');
     }
 
     // Also update current user if it's the same user
@@ -54,6 +61,7 @@ export class EmailVerificationService {
       currentUser.emailVerificationToken = token;
       currentUser.emailVerificationExpires = expires;
       localStorage.setItem('user', JSON.stringify(currentUser));
+      console.log('✅ Updated current user:', currentUser);
     }
 
     return token;
@@ -64,13 +72,23 @@ export class EmailVerificationService {
     await delay(1000); // Simulate API call
 
     const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-    const userIndex = allUsers.findIndex((u: User) => 
-      u.emailVerificationToken === token && 
-      u.emailVerificationExpires && 
-      new Date(u.emailVerificationExpires) > new Date()
-    );
+    
+    // Debug: Log token and users for debugging
+    console.log('🔍 Verifying token:', token);
+    console.log('👥 All users:', allUsers);
+    console.log('🔑 Looking for token in users...');
+    
+    const userIndex = allUsers.findIndex((u: User) => {
+      console.log(`User ${u.email}: token=${u.emailVerificationToken}, expires=${u.emailVerificationExpires}`);
+      return u.emailVerificationToken === token && 
+        u.emailVerificationExpires && 
+        new Date(u.emailVerificationExpires) > new Date();
+    });
+
+    console.log('🎯 User index found:', userIndex);
 
     if (userIndex === -1) {
+      console.log('❌ Token validation failed');
       return {
         success: false,
         message: 'Invalid or expired verification token'
