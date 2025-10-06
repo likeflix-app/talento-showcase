@@ -21,12 +21,19 @@ export interface EmailData {
 }
 
 export interface EmailTemplateData {
-  to_email: string;
-  to_name: string;
-  subject: string;
-  message: string;
+  to_email?: string;
+  to_name?: string;
+  subject?: string;
+  message?: string;
   from_name?: string;
   reply_to?: string;
+  // Standard EmailJS template variables
+  user_email?: string;
+  user_name?: string;
+  user_subject?: string;
+  user_message?: string;
+  // Additional fields
+  [key: string]: string | undefined;
 }
 
 export class EmailService {
@@ -44,9 +51,16 @@ export class EmailService {
    */
   async sendEmail(emailData: EmailData): Promise<{ success: boolean; message: string }> {
     try {
+      // Debug: Log configuration status
+      console.log('🔧 EmailJS Configuration Check:');
+      console.log('Service ID:', EMAILJS_SERVICE_ID ? '✅ Set' : '❌ Missing');
+      console.log('Template ID:', EMAILJS_TEMPLATE_ID ? '✅ Set' : '❌ Missing');
+      console.log('Public Key:', EMAILJS_PUBLIC_KEY ? '✅ Set' : '❌ Missing');
+      console.log('Business Email:', BUSINESS_EMAIL);
+      
       // Check if EmailJS is configured
       if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-        console.warn('EmailJS not configured. Falling back to console logging.');
+        console.warn('❌ EmailJS not configured. Falling back to console logging.');
         this.logEmail(emailData);
         return {
           success: false,
@@ -54,16 +68,32 @@ export class EmailService {
         };
       }
 
-      // Prepare template data for EmailJS
+      // Prepare template data for EmailJS with multiple parameter formats
       const templateData: EmailTemplateData = {
-        to_email: emailData.to[0], // EmailJS typically sends to one recipient at a time
+        // Standard EmailJS variables
+        to_email: emailData.to[0],
         to_name: this.extractNameFromEmail(emailData.to[0]),
         subject: emailData.subject,
         message: emailData.html,
         from_name: emailData.from_name || 'Talento Showcase',
-        reply_to: emailData.reply_to || BUSINESS_EMAIL
+        reply_to: emailData.reply_to || BUSINESS_EMAIL,
+        
+        // Alternative variable names (in case template uses different names)
+        user_email: emailData.to[0],
+        user_name: this.extractNameFromEmail(emailData.to[0]),
+        user_subject: emailData.subject,
+        user_message: emailData.html,
+        
+        // Additional common variables
+        email: emailData.to[0],
+        name: this.extractNameFromEmail(emailData.to[0]),
+        html_message: emailData.html,
+        text_message: this.stripHtml(emailData.html)
       };
 
+      // Debug: Log template data
+      console.log('📧 Sending email with template data:', templateData);
+      
       // Send email using EmailJS
       const result = await emailjs.send(
         EMAILJS_SERVICE_ID,
@@ -71,7 +101,7 @@ export class EmailService {
         templateData
       );
 
-      console.log('Email sent successfully:', result);
+      console.log('✅ Email sent successfully:', result);
       return {
         success: true,
         message: 'Email sent successfully'
@@ -324,6 +354,13 @@ export class EmailService {
   }
 
   /**
+   * Strip HTML tags from string
+   */
+  private stripHtml(html: string): string {
+    return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  /**
    * Fallback method to log email data when service is not available
    */
   private logEmail(emailData: EmailData): void {
@@ -339,6 +376,22 @@ export class EmailService {
    */
   isConfigured(): boolean {
     return !!(EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY);
+  }
+
+  /**
+   * Test email functionality
+   */
+  async testEmail(): Promise<{ success: boolean; message: string }> {
+    console.log('🧪 Testing email service...');
+    
+    const testEmailData: EmailData = {
+      to: ['test@example.com'],
+      subject: 'Test Email from Talento Showcase',
+      html: '<h1>Test Email</h1><p>This is a test email to verify the service is working.</p>',
+      from_name: 'Talento Showcase Test'
+    };
+
+    return await this.sendEmail(testEmailData);
   }
 }
 
