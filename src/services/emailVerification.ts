@@ -1,4 +1,5 @@
 import { User } from '@/types/auth';
+import { emailService } from './emailService';
 
 // Mock API delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -107,13 +108,36 @@ export class EmailVerificationService {
     try {
       const token = await this.generateVerificationToken(userId);
       
-      // In a real app, you would send an actual email here
-      console.log(`Verification email sent with token: ${token}`);
-      console.log(`Verification link: ${window.location.origin}/verify-email?token=${token}`);
+      // Get user data
+      const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+      const user = allUsers.find((u: User) => u.id === userId);
+      
+      if (!user) {
+        return {
+          success: false,
+          message: 'User not found'
+        };
+      }
+
+      // Generate verification URL
+      const verificationUrl = this.getVerificationUrl(token);
+      
+      // Send real email using the email service
+      const emailResult = await emailService.sendVerificationEmail(
+        user.email,
+        user.name,
+        verificationUrl
+      );
+
+      // Fallback to console logging if email service fails
+      if (!emailResult.success) {
+        console.log(`Verification email sent with token: ${token}`);
+        console.log(`Verification link: ${verificationUrl}`);
+      }
       
       return {
         success: true,
-        message: 'Verification email sent successfully!'
+        message: emailResult.success ? 'Verification email sent successfully!' : 'Verification email logged (service not configured)'
       };
     } catch (error) {
       return {

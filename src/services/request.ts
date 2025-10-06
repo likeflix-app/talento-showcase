@@ -1,4 +1,5 @@
 import { Request, CreateRequestData, EmailNotificationData } from '@/types/request';
+import { emailService } from './emailService';
 
 // Mock requests database
 const mockRequests: Request[] = [];
@@ -89,18 +90,37 @@ export const sendEmailNotification = async (
 ): Promise<void> => {
   await delay(1000); // Simulate API call
 
-  // In a real application, you would integrate with an email service like SendGrid, AWS SES, etc.
-  const emailData = {
-    to: [user.email, 'likeflix.app@gmail.com'],
-    subject: `Prenotazione Consulenza ID#${requestId} - Talento Showcase`,
-    html: generateEmailTemplate(requestId, user, talents, phoneNumber, timeSlot),
-  };
+  try {
+    // Send real emails using the email service
+    const emailResult = await emailService.sendBookingConfirmation(
+      requestId,
+      user,
+      talents,
+      phoneNumber,
+      timeSlot
+    );
 
-  // Mock email sending - in production, replace with actual email service
-  console.log('Email sent:', emailData);
-  
-  // You could also save the email to a database for tracking
-  // await emailService.sendEmail(emailData);
+    // Fallback to console logging if email service fails
+    if (!emailResult.success) {
+      console.log('📧 Email notification (fallback):');
+      console.log('Request ID:', requestId);
+      console.log('User:', user);
+      console.log('Talents:', talents);
+      console.log('Phone:', phoneNumber);
+      console.log('Time Slot:', timeSlot);
+      console.log('---');
+    }
+  } catch (error) {
+    console.error('Failed to send email notification:', error);
+    // Fallback to console logging
+    console.log('📧 Email notification (error fallback):');
+    console.log('Request ID:', requestId);
+    console.log('User:', user);
+    console.log('Talents:', talents);
+    console.log('Phone:', phoneNumber);
+    console.log('Time Slot:', timeSlot);
+    console.log('---');
+  }
 };
 
 const generateEmailTemplate = (
