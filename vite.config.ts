@@ -22,4 +22,6 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     host: "::",
   },
+  // Configure for SPA routing in production
+  base: "/",
 }));
