@@ -91,6 +91,9 @@ const UsersManagement = () => {
           <h2 className="text-2xl font-bold">Users Management</h2>
           <p className="text-muted-foreground">Manage user accounts and permissions</p>
         </div>
+        <Button onClick={fetchUsers} variant="outline" size="sm">
+          🔄 Refresh Users
+        </Button>
       </div>
 
       {/* Search */}

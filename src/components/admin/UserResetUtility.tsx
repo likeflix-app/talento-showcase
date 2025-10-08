@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Trash2, Users, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { resetUsers, getUserCount, verifyAllUsers, debugUsers } from '@/utils/resetUsers';
+import { resetUsers, getUserCount } from '@/utils/resetUsers';
 
 const UserResetUtility = () => {
   const { toast } = useToast();
@@ -42,42 +42,6 @@ const UserResetUtility = () => {
     } finally {
       setIsResetting(false);
     }
-  };
-
-  const handleVerifyAllUsers = async () => {
-    if (!confirm('✅ Are you sure you want to verify ALL users?\n\nThis will mark all registered users as email verified.')) {
-      return;
-    }
-
-    setIsResetting(true);
-    try {
-      await verifyAllUsers();
-      
-      toast({
-        title: '✅ All Users Verified',
-        description: 'All registered users are now verified and will appear in the admin panel.',
-      });
-
-      // Reload user counts
-      await loadUserCounts();
-    } catch (error) {
-      console.error('Verify error:', error);
-      toast({
-        title: '❌ Verification Failed',
-        description: 'There was an error verifying users.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsResetting(false);
-    }
-  };
-
-  const handleDebugUsers = () => {
-    const users = debugUsers();
-    toast({
-      title: '🔍 Debug Info',
-      description: `Found ${users.length} users. Check console for details.`,
-    });
   };
 
   React.useEffect(() => {
@@ -119,18 +83,8 @@ const UserResetUtility = () => {
             </AlertDescription>
           </Alert>
 
-          {/* Action Buttons */}
-          <div className="flex gap-4 flex-wrap">
-            <Button
-              onClick={handleVerifyAllUsers}
-              disabled={isResetting}
-              variant="default"
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
-            >
-              <CheckCircle className="h-4 w-4" />
-              {isResetting ? 'Processing...' : 'Verify All Users'}
-            </Button>
-
+          {/* Reset Button */}
+          <div className="flex gap-4">
             <Button
               onClick={handleResetUsers}
               disabled={isResetting}
@@ -142,25 +96,14 @@ const UserResetUtility = () => {
             </Button>
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              onClick={loadUserCounts}
-              variant="ghost"
-              size="sm"
-              className="text-gray-600"
-            >
-              🔄 Refresh User Counts
-            </Button>
-            
-            <Button
-              onClick={handleDebugUsers}
-              variant="ghost"
-              size="sm"
-              className="text-blue-600"
-            >
-              🔍 Debug Users
-            </Button>
-          </div>
+          <Button
+            onClick={loadUserCounts}
+            variant="ghost"
+            size="sm"
+            className="text-gray-600"
+          >
+            🔄 Refresh User Counts
+          </Button>
         </CardContent>
       </Card>
     </div>
