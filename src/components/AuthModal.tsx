@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, User, Mail, Lock, Eye, EyeOff, Phone } from 'lucide-react';
 import EmailVerificationModal from './EmailVerificationModal';
 import { User as UserType } from '@/types/auth';
+import { simpleAuthService, SimpleRegistrationData } from '@/services/simpleAuth';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -39,18 +40,37 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(loginForm);
+      // Use simple auth system for login
+      const simpleUser = await simpleAuthService.login(loginForm);
+      
+      // Convert to UserType for compatibility
+      const user: UserType = {
+        id: simpleUser.id,
+        name: simpleUser.name,
+        email: simpleUser.email,
+        role: simpleUser.role,
+        createdAt: simpleUser.createdAt,
+        emailVerified: simpleUser.emailVerified,
+        mobile: '' // Simple auth doesn't store mobile
+      };
+      
+      // Update the auth context with the logged in user
+      localStorage.setItem('user', JSON.stringify(user));
+      
       toast({
         title: 'Login successful!',
         description: 'Welcome back!',
       });
       onClose();
       setLoginForm({ email: '', password: '' });
+      
+      // Reload the page to update the auth context
+      window.location.reload();
     } catch (error) {
       if (error instanceof Error && error.message === 'EMAIL_NOT_VERIFIED') {
         // Find the unverified user
-        const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-        const user = allUsers.find((u: UserType) => u.email === loginForm.email);
+        const allUsers = JSON.parse(localStorage.getItem('talento_users') || '[]');
+        const user = allUsers.find((u: any) => u.email === loginForm.email);
         if (user) {
           setUnverifiedUser(user);
           setShowEmailVerification(true);
@@ -69,7 +89,24 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const user = await register(registerForm);
+      // Use simple auth system for registration
+      const simpleUser = await simpleAuthService.register({
+        name: registerForm.name,
+        email: registerForm.email,
+        password: registerForm.password
+      });
+      
+      // Convert to UserType for compatibility
+      const user: UserType = {
+        id: simpleUser.id,
+        name: simpleUser.name,
+        email: simpleUser.email,
+        role: simpleUser.role,
+        createdAt: simpleUser.createdAt,
+        emailVerified: simpleUser.emailVerified,
+        mobile: registerForm.mobile
+      };
+      
       toast({
         title: 'Registrazione completata!',
         description: 'Controlla la tua email per verificare il tuo account.',

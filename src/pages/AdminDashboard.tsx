@@ -22,7 +22,6 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import TalentsManagement from '@/components/admin/TalentsManagement';
-import UsersManagement from '@/components/admin/UsersManagement';
 import SimpleUsersManagement from '@/components/admin/SimpleUsersManagement';
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
 import RequestsManagement from '@/components/admin/RequestsManagement';
@@ -32,7 +31,7 @@ const AdminDashboard = () => {
   const { user, logout } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('simple-users');
+  const [activeTab, setActiveTab] = useState('users');
 
   const handleLogout = async () => {
     try {
@@ -109,7 +108,7 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="analytics" className="flex items-center space-x-2">
               <TrendingUp className="h-4 w-4" />
               <span>Analytics</span>
@@ -122,13 +121,9 @@ const AdminDashboard = () => {
               <UserCheck className="h-4 w-4" />
               <span>Talents</span>
             </TabsTrigger>
-            <TabsTrigger value="simple-users" className="flex items-center space-x-2">
-              <Users className="h-4 w-4" />
-              <span>Simple Users</span>
-            </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center space-x-2">
               <Users className="h-4 w-4" />
-              <span>Users (Old)</span>
+              <span>Users</span>
             </TabsTrigger>
           </TabsList>
 
@@ -144,12 +139,8 @@ const AdminDashboard = () => {
             <TalentsManagement />
           </TabsContent>
 
-          <TabsContent value="simple-users" className="space-y-6">
-            <SimpleUsersManagement />
-          </TabsContent>
-
           <TabsContent value="users" className="space-y-6">
-            <UsersManagement />
+            <SimpleUsersManagement />
             <UserResetUtility />
           </TabsContent>
         </Tabs>
