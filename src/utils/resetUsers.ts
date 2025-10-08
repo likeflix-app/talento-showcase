@@ -1,10 +1,8 @@
-import { supabase } from '@/lib/supabase';
-
 /**
  * Reset all users to only keep the admin user
- * This function clears localStorage and optionally Supabase database
+ * This function clears localStorage users
  */
-export const resetUsers = async (clearSupabase: boolean = false): Promise<void> => {
+export const resetUsers = async (): Promise<void> => {
   console.log('🧹 Starting user reset...');
 
   // 1. Clear localStorage users
@@ -26,51 +24,15 @@ export const resetUsers = async (clearSupabase: boolean = false): Promise<void> 
   ];
   localStorage.setItem('allUsers', JSON.stringify(defaultUsers));
 
-  // 3. If Supabase is configured, clear database users too
-  if (clearSupabase) {
-    console.log('🗄️ Clearing Supabase users...');
-    try {
-      // Delete all users except admin
-      const { error } = await supabase
-        .from('users')
-        .delete()
-        .neq('email', 'admin@talento.com');
-
-      if (error) {
-        console.error('❌ Error clearing Supabase users:', error);
-        throw error;
-      }
-
-      console.log('✅ Supabase users cleared successfully');
-    } catch (error) {
-      console.error('❌ Failed to clear Supabase users:', error);
-      // Don't throw error, continue with localStorage reset
-    }
-  }
-
   console.log('✅ User reset completed! Only admin user remains.');
 };
 
 /**
  * Get current user count for verification
  */
-export const getUserCount = async (): Promise<{ localStorage: number; supabase?: number }> => {
+export const getUserCount = async (): Promise<{ localStorage: number }> => {
   const localStorageUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-  const result: { localStorage: number; supabase?: number } = {
+  return {
     localStorage: localStorageUsers.length
   };
-
-  try {
-    const { count, error } = await supabase
-      .from('users')
-      .select('*', { count: 'exact', head: true });
-
-    if (!error) {
-      result.supabase = count || 0;
-    }
-  } catch (error) {
-    // Supabase not configured or error, ignore
-  }
-
-  return result;
 };
