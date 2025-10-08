@@ -143,6 +143,7 @@ export class EmailVerificationService {
       // Generate verification URL
       const verificationUrl = this.getVerificationUrl(token);
       console.log('🔗 Generated verification URL:', verificationUrl);
+      console.log('🌐 Base URL being used:', 'https://frontend-isadora.onrender.com');
       
       // Send real email using the email service
       const emailResult = await emailService.sendVerificationEmail(
