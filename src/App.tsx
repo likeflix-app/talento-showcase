@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Checkout from "./pages/Checkout";
 import EmailVerification from "./pages/EmailVerification";
 import SimpleTestPage from "./components/SimpleTestPage";
+import SimpleEmailVerification from "./components/SimpleEmailVerification";
 
 const queryClient = new QueryClient();
 
@@ -28,7 +29,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/checkout" element={<Checkout />} />
-                <Route path="/verify-email" element={<EmailVerification />} />
+                <Route path="/verify-email" element={<SimpleEmailVerification />} />
                 <Route path="/simple-test" element={<SimpleTestPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
