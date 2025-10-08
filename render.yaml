@@ -2,12 +2,13 @@ services:
   - type: web
     name: talento-showcase
     env: static
-    buildCommand: npm run build
+    buildCommand: npm install && npm run build
     staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: true
     headers:
       - path: /*
-        name: X-Robots-Tag
-        value: noindex
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
     routes:
       - type: rewrite
         source: /*
