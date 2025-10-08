@@ -101,6 +101,9 @@ export class AuthService {
     // Generate verification token and send email
     await emailVerificationService.generateVerificationToken(newUser.id);
     
+    // Send verification email immediately after registration
+    await emailVerificationService.resendVerificationEmail(newUser.id);
+    
     return newUser;
   }
 

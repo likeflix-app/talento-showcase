@@ -35,6 +35,7 @@ export class EmailVerificationService {
     const token = generateVerificationToken();
     const expires = generateExpirationTime();
 
+    // Debug: Log token generation
     console.log('🔑 Generating token for user:', userId);
     console.log('🎫 Generated token:', token);
     console.log('⏰ Expires at:', expires);
@@ -172,7 +173,11 @@ export class EmailVerificationService {
 
   // Get verification URL (for demo purposes)
   getVerificationUrl(token: string): string {
-    return `${window.location.origin}/verify-email?token=${token}`;
+    // Use production URL in production, localhost in development
+    const baseUrl = import.meta.env.PROD 
+      ? 'https://frontend-isadora.onrender.com'
+      : window.location.origin;
+    return `${baseUrl}/verify-email?token=${token}`;
   }
 }
 
