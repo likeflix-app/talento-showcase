@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
 import Checkout from "./pages/Checkout";
 import EmailVerification from "./pages/EmailVerification";
+import SimpleTestPage from "./components/SimpleTestPage";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/verify-email" element={<EmailVerification />} />
+                <Route path="/simple-test" element={<SimpleTestPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
