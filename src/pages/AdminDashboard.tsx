@@ -25,6 +25,7 @@ import TalentsManagement from '@/components/admin/TalentsManagement';
 import UsersManagement from '@/components/admin/UsersManagement';
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
 import RequestsManagement from '@/components/admin/RequestsManagement';
+import UserResetUtility from '@/components/admin/UserResetUtility';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -140,6 +141,7 @@ const AdminDashboard = () => {
 
           <TabsContent value="users" className="space-y-6">
             <UsersManagement />
+            <UserResetUtility />
           </TabsContent>
         </Tabs>
       </main>
