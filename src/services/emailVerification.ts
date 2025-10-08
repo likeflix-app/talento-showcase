@@ -81,6 +81,7 @@ export class EmailVerificationService {
     
     const userIndex = allUsers.findIndex((u: User) => {
       console.log(`User ${u.email}: token=${u.emailVerificationToken}, expires=${u.emailVerificationExpires}`);
+      // Only check users that have verification tokens (skip mock users and already verified users)
       return u.emailVerificationToken === token && 
         u.emailVerificationExpires && 
         new Date(u.emailVerificationExpires) > new Date();
@@ -169,6 +170,19 @@ export class EmailVerificationService {
   // Check if user needs email verification
   needsEmailVerification(user: User): boolean {
     return !user.emailVerified;
+  }
+
+  // Clear all verification data (for testing)
+  clearVerificationData(): void {
+    console.log('🧹 Clearing all verification data...');
+    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    const updatedUsers = allUsers.map((user: User) => ({
+      ...user,
+      emailVerificationToken: undefined,
+      emailVerificationExpires: undefined,
+    }));
+    localStorage.setItem('allUsers', JSON.stringify(updatedUsers));
+    console.log('✅ Verification data cleared');
   }
 
   // Get verification URL (for demo purposes)
