@@ -43,7 +43,14 @@ export class AuthService {
   async login(credentials: LoginCredentials): Promise<User> {
     await delay(1000); // Simulate API call
 
-    const user = mockUsers.find(u => u.email === credentials.email);
+    // Check both mockUsers and allUsers from localStorage
+    let user = mockUsers.find(u => u.email === credentials.email);
+    
+    // If not found in mockUsers, check allUsers from localStorage
+    if (!user) {
+      const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+      user = allUsers.find((u: User) => u.email === credentials.email);
+    }
     
     if (!user) {
       throw new Error('Invalid email or password');
