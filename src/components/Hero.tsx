@@ -67,10 +67,10 @@ const Hero = () => {
         </div>
 
         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-fade-in">
-          Incontra i Migliori Esperti
+          ISADORA Talent Agency
         </h1>
         <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          Consulenze personalizzate con professionisti d'eccellenza in sport, cucina, cinema, moda e molto altro
+          Scegli tra i migliori talent oppure acquista un pacchetto e conquista i social con contenuti creati da veri professionisti del settore! Puoi anche richiedere la condivisione dei tuoi post nelle storie di Influencer e Celebrity.<br/><br/>Stima i costi e prenota una consulenza personalizzata.
         </p>
         <Button 
           size="lg" 
