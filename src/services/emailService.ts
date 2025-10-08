@@ -74,7 +74,7 @@ export class EmailService {
         to_email: emailData.to[0],
         to_name: this.extractNameFromEmail(emailData.to[0]),
         subject: emailData.subject,
-        message: emailData.html,
+        message: this.stripHtml(emailData.html), // Use plain text instead of HTML
         from_name: emailData.from_name || 'Talento Showcase',
         reply_to: emailData.reply_to || BUSINESS_EMAIL,
         
@@ -82,7 +82,7 @@ export class EmailService {
         user_email: emailData.to[0],
         user_name: this.extractNameFromEmail(emailData.to[0]),
         user_subject: emailData.subject,
-        user_message: emailData.html,
+        user_message: this.stripHtml(emailData.html),
         
         // Additional common variables
         email: emailData.to[0],
@@ -198,37 +198,23 @@ export class EmailService {
    */
   private generateVerificationEmailTemplate(userName: string, verificationUrl: string): string {
     return `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
-          Verifica il tuo account
-        </h2>
-        
-        <p>Ciao ${userName},</p>
-        
-        <p>Grazie per esserti registrato su Talento Showcase! Per completare la registrazione, clicca sul pulsante qui sotto per verificare il tuo indirizzo email:</p>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${verificationUrl}" 
-             style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
-            Verifica Email
-          </a>
-        </div>
-        
-        <p>Se il pulsante non funziona, puoi anche copiare e incollare questo link nel tuo browser:</p>
-        <p style="word-break: break-all; color: #666; background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
-          ${verificationUrl}
-        </p>
-        
-        <p>Il link di verifica scadrà tra 24 ore.</p>
-        
-        <p>Se non hai creato un account su Talento Showcase, puoi ignorare questa email.</p>
-        
-        <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-        <p style="color: #666; font-size: 12px;">
-          Questa email è stata inviata automaticamente da Talento Showcase.
-        </p>
-      </div>
-    `;
+Ciao ${userName},
+
+Grazie per esserti registrato su Talento Showcase!
+
+Per completare la registrazione e verificare il tuo account, clicca sul link qui sotto:
+
+${verificationUrl}
+
+Se il link non funziona, copia e incolla l'URL sopra nel tuo browser.
+
+Il link di verifica scadrà tra 24 ore.
+
+Se non hai creato un account su Talento Showcase, puoi ignorare questa email.
+
+Grazie,
+Il team di Talento Showcase
+    `.trim();
   }
 
   /**
