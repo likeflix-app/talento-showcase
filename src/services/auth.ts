@@ -2,7 +2,7 @@ import { User, LoginCredentials, RegisterCredentials } from '@/types/auth';
 import { emailVerificationService } from './emailVerification';
 
 // Mock users database (in a real app, this would be a backend API)
-const mockUsers: User[] = [
+export const mockUsers: User[] = [
   {
     id: '1',
     email: 'demo@example.com',
@@ -96,12 +96,6 @@ export class AuthService {
       emailVerified: false,
     };
 
-    mockUsers.push(newUser);
-    
-    // DO NOT log in the user - they must verify email first
-    // this.currentUser = newUser; // REMOVED
-    // localStorage.setItem('user', JSON.stringify(newUser)); // REMOVED
-    
     // Store in the allUsers array for admin panel
     const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
     console.log('📝 Registration - Current allUsers before adding:', allUsers);
@@ -109,6 +103,14 @@ export class AuthService {
     localStorage.setItem('allUsers', JSON.stringify(allUsers));
     console.log('✅ Registration - New user added to localStorage:', newUser);
     console.log('📊 Registration - Total users after registration:', allUsers.length);
+    
+    // Also add to mockUsers for login compatibility
+    mockUsers.push(newUser);
+    console.log('✅ Registration - New user added to mockUsers array');
+    
+    // DO NOT log in the user - they must verify email first
+    // this.currentUser = newUser; // REMOVED
+    // localStorage.setItem('user', JSON.stringify(newUser)); // REMOVED
 
     // Generate verification token and send email
     await emailVerificationService.generateVerificationToken(newUser.id);

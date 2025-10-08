@@ -120,6 +120,19 @@ export class EmailVerificationService {
     const updatedUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
     const updatedUser = updatedUsers.find(u => u.id === allUsers[userIndex].id);
     console.log('🔍 Email Verification - Final verification status:', updatedUser?.emailVerified);
+    
+    // Also update mockUsers array to keep both systems in sync
+    const { mockUsers } = await import('./auth');
+    const mockUserIndex = mockUsers.findIndex((u: any) => u.id === allUsers[userIndex].id);
+    if (mockUserIndex !== -1) {
+      mockUsers[mockUserIndex] = {
+        ...mockUsers[mockUserIndex],
+        emailVerified: true,
+        emailVerificationToken: undefined,
+        emailVerificationExpires: undefined,
+      };
+      console.log('✅ Email Verification - Updated mockUsers array for login compatibility');
+    }
 
     // Also update current user if it's the same user
     const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
