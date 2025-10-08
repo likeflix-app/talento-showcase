@@ -90,10 +90,12 @@ export class AuthService {
     };
 
     mockUsers.push(newUser);
-    this.currentUser = newUser;
-    localStorage.setItem('user', JSON.stringify(newUser));
     
-    // Also store in the allUsers array for admin panel
+    // DO NOT log in the user - they must verify email first
+    // this.currentUser = newUser; // REMOVED
+    // localStorage.setItem('user', JSON.stringify(newUser)); // REMOVED
+    
+    // Store in the allUsers array for admin panel
     const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
     allUsers.push(newUser);
     localStorage.setItem('allUsers', JSON.stringify(allUsers));
@@ -104,6 +106,7 @@ export class AuthService {
     // Send verification email immediately after registration
     await emailVerificationService.resendVerificationEmail(newUser.id);
     
+    // Return user but they are NOT logged in
     return newUser;
   }
 

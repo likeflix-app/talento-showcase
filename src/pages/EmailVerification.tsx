@@ -37,8 +37,11 @@ const EmailVerification: React.FC = () => {
         if (result.success) {
           toast({
             title: 'Email verificata!',
-            description: 'Il tuo account è stato verificato con successo.',
+            description: 'Il tuo account è stato verificato con successo. Ora puoi accedere.',
           });
+          
+          // Clear any existing user session to ensure fresh login
+          localStorage.removeItem('user');
         } else {
           toast({
             title: 'Verifica fallita',
@@ -116,7 +119,7 @@ const EmailVerification: React.FC = () => {
                     Email verificata con successo
                   </p>
                   <p className="text-gray-600">
-                    Il tuo account è ora attivo e puoi iniziare a prenotare le tue consulenze
+                    Il tuo account è ora attivo! Accedi per iniziare a prenotare le tue consulenze
                   </p>
                 </div>
                 <div className="space-y-3 pt-4">
