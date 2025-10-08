@@ -19,8 +19,8 @@ const EmailVerification: React.FC = () => {
 
   useEffect(() => {
     const verifyEmail = async () => {
-      console.log('🔗 URL Token from params:', token);
-      console.log('🔗 Current URL:', window.location.href);
+      console.log('🔍 Token from URL:', token);
+      console.log('🔍 All search params:', Object.fromEntries(searchParams.entries()));
       
       if (!token) {
         setMessage('Token di verifica non trovato');
