@@ -27,6 +27,7 @@ export class UserService {
           name: 'Demo User',
           role: 'user' as const,
           createdAt: new Date().toISOString(),
+          emailVerified: true,
         },
         {
           id: '2',
@@ -34,6 +35,7 @@ export class UserService {
           name: 'Admin User',
           role: 'admin' as const,
           createdAt: new Date().toISOString(),
+          emailVerified: true,
         }
       ];
       localStorage.setItem('allUsers', JSON.stringify(mockUsers));

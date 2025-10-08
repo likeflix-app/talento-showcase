@@ -24,10 +24,16 @@ const UsersManagement = () => {
     try {
       setLoading(true);
       const data = await userService.getAllUsers();
+      console.log('🔍 Admin Panel - All users fetched:', data);
+      
       // Only show verified users
       const verifiedUsers = data.filter(user => user.emailVerified);
+      console.log('✅ Admin Panel - Verified users:', verifiedUsers);
+      console.log('📊 Admin Panel - Total verified users count:', verifiedUsers.length);
+      
       setUsers(verifiedUsers);
     } catch (error) {
+      console.error('❌ Admin Panel - Error fetching users:', error);
       toast({
         title: 'Error',
         description: 'Failed to fetch users',

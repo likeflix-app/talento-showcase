@@ -42,7 +42,11 @@ export class EmailVerificationService {
 
     // Update user in localStorage
     const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    console.log('🔍 Token Generation - Looking for userId:', userId);
+    console.log('🔍 Token Generation - Available users:', allUsers.map(u => ({ id: u.id, email: u.email })));
+    
     const userIndex = allUsers.findIndex((u: User) => u.id === userId);
+    console.log('🔍 Token Generation - User index found:', userIndex);
     
     if (userIndex !== -1) {
       allUsers[userIndex] = {
@@ -53,7 +57,8 @@ export class EmailVerificationService {
       localStorage.setItem('allUsers', JSON.stringify(allUsers));
       console.log('✅ Updated user in allUsers array:', allUsers[userIndex]);
     } else {
-      console.log('❌ User not found in allUsers array');
+      console.log('❌ User not found in allUsers array for userId:', userId);
+      console.log('❌ Available user IDs:', allUsers.map(u => u.id));
     }
 
     // Also update current user if it's the same user
@@ -99,13 +104,22 @@ export class EmailVerificationService {
     }
 
     // Mark email as verified
+    console.log('🔍 Email Verification - User before verification:', allUsers[userIndex]);
     allUsers[userIndex] = {
       ...allUsers[userIndex],
       emailVerified: true,
       emailVerificationToken: undefined,
       emailVerificationExpires: undefined,
     };
+    console.log('✅ Email Verification - User after verification:', allUsers[userIndex]);
+    console.log('🔍 Email Verification - emailVerified field:', allUsers[userIndex].emailVerified);
     localStorage.setItem('allUsers', JSON.stringify(allUsers));
+    console.log('💾 Email Verification - Updated localStorage with verified user');
+    
+    // Verify the update worked
+    const updatedUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    const updatedUser = updatedUsers.find(u => u.id === allUsers[userIndex].id);
+    console.log('🔍 Email Verification - Final verification status:', updatedUser?.emailVerified);
 
     // Also update current user if it's the same user
     const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
@@ -143,7 +157,7 @@ export class EmailVerificationService {
       // Generate verification URL
       const verificationUrl = this.getVerificationUrl(token);
       console.log('🔗 Generated verification URL:', verificationUrl);
-      console.log('🌐 Base URL being used:', 'https://frontend-isadora.onrender.com');
+      console.log('🌐 Base URL being used:', window.location.origin);
       
       // Send real email using the email service
       const emailResult = await emailService.sendVerificationEmail(
@@ -177,8 +191,8 @@ export class EmailVerificationService {
 
   // Get verification URL (for demo purposes)
   getVerificationUrl(token: string): string {
-    // Always use production URL for verification links
-    const baseUrl = 'https://frontend-isadora.onrender.com';
+    // Use current origin (localhost for dev, production for prod)
+    const baseUrl = window.location.origin;
     return `${baseUrl}/verify-email?token=${token}`;
   }
 }

@@ -104,8 +104,11 @@ export class AuthService {
     
     // Store in the allUsers array for admin panel
     const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    console.log('📝 Registration - Current allUsers before adding:', allUsers);
     allUsers.push(newUser);
     localStorage.setItem('allUsers', JSON.stringify(allUsers));
+    console.log('✅ Registration - New user added to localStorage:', newUser);
+    console.log('📊 Registration - Total users after registration:', allUsers.length);
 
     // Generate verification token and send email
     await emailVerificationService.generateVerificationToken(newUser.id);
