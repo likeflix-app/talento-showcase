@@ -15,6 +15,7 @@ const UsersManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debugInfo, setDebugInfo] = useState<any>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -97,10 +98,67 @@ const UsersManagement = () => {
           <h2 className="text-2xl font-bold">Users Management</h2>
           <p className="text-muted-foreground">Manage user accounts and permissions</p>
         </div>
-        <Button onClick={fetchUsers} variant="outline" size="sm">
-          🔄 Refresh Users
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={fetchUsers} variant="outline" size="sm">
+            🔄 Refresh Users
+          </Button>
+          <Button 
+            onClick={() => {
+              // Get debug info directly
+              const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+              const verifiedUsers = allUsers.filter(user => user.emailVerified === true);
+              const unverifiedUsers = allUsers.filter(user => user.emailVerified === false);
+              
+              const debugData = {
+                totalUsers: allUsers.length,
+                verifiedUsers: verifiedUsers.length,
+                unverifiedUsers: unverifiedUsers.length,
+                allUsers: allUsers,
+                verifiedUsersList: verifiedUsers,
+                unverifiedUsersList: unverifiedUsers
+              };
+              
+              setDebugInfo(debugData);
+              console.log('🔍 DEBUG INFO:', debugData);
+            }} 
+            variant="outline" 
+            size="sm"
+          >
+            🔍 Debug Users
+          </Button>
+        </div>
       </div>
+
+      {/* Debug Info */}
+      {debugInfo && (
+        <Card className="bg-blue-50 border-blue-200">
+          <CardHeader>
+            <CardTitle className="text-blue-800">🔍 Debug Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="p-3 bg-white rounded border">
+                <p className="font-semibold">Total Users</p>
+                <p className="text-2xl text-blue-600">{debugInfo.totalUsers}</p>
+              </div>
+              <div className="p-3 bg-white rounded border">
+                <p className="font-semibold">Verified Users</p>
+                <p className="text-2xl text-green-600">{debugInfo.verifiedUsers}</p>
+              </div>
+              <div className="p-3 bg-white rounded border">
+                <p className="font-semibold">Unverified Users</p>
+                <p className="text-2xl text-orange-600">{debugInfo.unverifiedUsers}</p>
+              </div>
+            </div>
+            <details className="mt-4">
+              <summary className="cursor-pointer font-semibold">Show All Users Data</summary>
+              <pre className="mt-2 p-3 bg-gray-100 rounded text-xs overflow-auto">
+                {JSON.stringify(debugInfo.allUsers, null, 2)}
+              </pre>
+            </details>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Search */}
       <div className="flex items-center space-x-2">
