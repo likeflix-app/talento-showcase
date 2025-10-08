@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle, XCircle, Loader2, ArrowLeft } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, ArrowLeft, Mail, Sparkles } from 'lucide-react';
 import { emailVerificationService } from '@/services/emailVerification';
 import { useToast } from '@/hooks/use-toast';
 
@@ -71,65 +71,113 @@ const EmailVerification: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">
-            Verifica Email
-          </CardTitle>
-          <CardDescription>
-            Completiamo la verifica del tuo account
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent className="space-y-6">
-          {isLoading ? (
-            <div className="text-center space-y-4">
-              <Loader2 className="h-12 w-12 animate-spin mx-auto text-blue-500" />
-              <p className="text-muted-foreground">
-                Verifica in corso...
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <Alert className={isSuccess ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
-                {isSuccess ? (
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                ) : (
-                  <XCircle className="h-4 w-4 text-red-600" />
-                )}
-                <AlertDescription className={isSuccess ? 'text-green-800' : 'text-red-800'}>
-                  {message}
-                </AlertDescription>
-              </Alert>
-
-              <div className="space-y-3">
-                {isSuccess ? (
-                  <>
-                    <Button onClick={handleLogin} className="w-full">
-                      Accedi al tuo account
-                    </Button>
-                    <Button onClick={handleGoHome} variant="outline" className="w-full">
-                      Torna alla home
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button onClick={handleGoHome} className="w-full">
-                      <ArrowLeft className="h-4 w-4 mr-2" />
-                      Torna alla home
-                    </Button>
-                    <p className="text-sm text-muted-foreground text-center">
-                      Se il link è scaduto, puoi richiedere un nuovo link di verifica
-                      dalla pagina di login.
-                    </p>
-                  </>
-                )}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-lg">
+        {isLoading ? (
+          <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
+            <CardContent className="pt-8 pb-8">
+              <div className="text-center space-y-6">
+                <div className="relative">
+                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                    <Loader2 className="h-10 w-10 text-white animate-spin" />
+                  </div>
+                  <div className="absolute -top-2 -right-2">
+                    <Sparkles className="h-6 w-6 text-yellow-400 animate-pulse" />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                    Verifica in corso...
+                  </h2>
+                  <p className="text-gray-600">
+                    Stiamo verificando il tuo account, attendi un momento
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        ) : isSuccess ? (
+          <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
+            <CardContent className="pt-8 pb-8">
+              <div className="text-center space-y-6">
+                <div className="relative">
+                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                    <CheckCircle className="h-10 w-10 text-white" />
+                  </div>
+                  <div className="absolute -top-2 -right-2">
+                    <Sparkles className="h-6 w-6 text-yellow-400 animate-bounce" />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                    🎉 Perfetto!
+                  </h2>
+                  <p className="text-xl text-green-600 font-semibold mb-2">
+                    Email verificata con successo
+                  </p>
+                  <p className="text-gray-600">
+                    Il tuo account è ora attivo e puoi iniziare a prenotare le tue consulenze
+                  </p>
+                </div>
+                <div className="space-y-3 pt-4">
+                  <Button 
+                    onClick={handleLogin} 
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    <Mail className="h-5 w-5 mr-2" />
+                    Accedi al tuo account
+                  </Button>
+                  <Button 
+                    onClick={handleGoHome} 
+                    variant="outline" 
+                    className="w-full border-2 border-gray-300 hover:border-gray-400 py-3 text-lg font-medium transition-all duration-200"
+                  >
+                    Torna alla home
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
+            <CardContent className="pt-8 pb-8">
+              <div className="text-center space-y-6">
+                <div className="relative">
+                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
+                    <XCircle className="h-10 w-10 text-white" />
+                  </div>
+                  <div className="absolute -top-2 -right-2">
+                    <Sparkles className="h-6 w-6 text-red-400 animate-pulse" />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                    Ops! Qualcosa è andato storto
+                  </h2>
+                  <Alert className="border-red-200 bg-red-50 text-left">
+                    <XCircle className="h-4 w-4 text-red-600" />
+                    <AlertDescription className="text-red-800">
+                      {message}
+                    </AlertDescription>
+                  </Alert>
+                </div>
+                <div className="space-y-3 pt-4">
+                  <Button 
+                    onClick={handleGoHome} 
+                    className="w-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    <ArrowLeft className="h-5 w-5 mr-2" />
+                    Torna alla home
+                  </Button>
+                  <p className="text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">
+                    💡 <strong>Suggerimento:</strong> Se il link è scaduto, puoi richiedere un nuovo link di verifica dalla pagina di login.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
