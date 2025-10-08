@@ -24,7 +24,9 @@ const UsersManagement = () => {
     try {
       setLoading(true);
       const data = await userService.getAllUsers();
-      setUsers(data);
+      // Only show verified users
+      const verifiedUsers = data.filter(user => user.emailVerified);
+      setUsers(verifiedUsers);
     } catch (error) {
       toast({
         title: 'Error',
@@ -107,9 +109,9 @@ const UsersManagement = () => {
       {/* Users Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Users ({filteredUsers.length})</CardTitle>
+          <CardTitle>Verified Users ({filteredUsers.length})</CardTitle>
           <CardDescription>
-            Manage user accounts, roles, and permissions
+            Manage verified user accounts, roles, and permissions
           </CardDescription>
         </CardHeader>
         <CardContent>

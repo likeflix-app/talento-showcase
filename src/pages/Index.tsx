@@ -1,7 +1,6 @@
 import Hero from "@/components/Hero";
 import TalentCarousel from "@/components/TalentCarousel";
 import Footer from "@/components/Footer";
-import EmailTest from "@/components/EmailTest";
 
 import talentSport1 from "@/assets/talent-sport-1.jpg";
 import talentFood1 from "@/assets/talent-food-1.jpg";
@@ -237,12 +236,6 @@ const Index = () => {
         />
       </div>
 
-      {/* Temporary Email Test Component */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <EmailTest />
-        </div>
-      </section>
 
       <Footer />
     </div>
