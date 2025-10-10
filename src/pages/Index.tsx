@@ -220,6 +220,15 @@ const Index = () => {
       <Hero />
       
       <div id="consulenze" className="space-y-2">
+        {/* Descriptive text before talent list */}
+        <div className="py-12 bg-gradient-to-b from-background to-muted/20">
+          <div className="container mx-auto px-4 text-center max-w-4xl">
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-light">
+              Scegli i Talent che ti ispirano e visualizza la stima di spesa per la tua campagna. In linea con il tuo budget? Fissiamo una call: puoi personalizzare ogni dettaglio, ricevere un'offerta ritagliata su misura e iniziare a farti notare sui social con i nostri professionisti.
+            </p>
+          </div>
+        </div>
+        
         <TalentCarousel 
           title="Esperti Premium" 
           talents={premiumTalents}

@@ -13,6 +13,7 @@ import Checkout from "./pages/Checkout";
 import EmailVerification from "./pages/EmailVerification";
 import SimpleTestPage from "./components/SimpleTestPage";
 import SimpleEmailVerification from "./components/SimpleEmailVerification";
+import TalentApplication from "./pages/TalentApplication";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/verify-email" element={<SimpleEmailVerification />} />
                 <Route path="/simple-test" element={<SimpleTestPage />} />
+                <Route path="/diventa-talento" element={<TalentApplication />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
