@@ -4,9 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { apiService, User, UserStats } from '@/services/api';
-import { Search, Shield, User as UserIcon, Database } from 'lucide-react';
+import { Search, Shield, User as UserIcon, Database, X } from 'lucide-react';
 
 const BackendUsersManagement = () => {
   const { toast } = useToast();
@@ -65,6 +66,71 @@ const BackendUsersManagement = () => {
       }
     } catch (error) {
       console.error('❌ Backend Admin - Error fetching stats:', error);
+    }
+  };
+
+  const handleRoleChange = async (userId: string, newRole: 'user' | 'admin') => {
+    try {
+      // Update user role in backend
+      const response = await apiService.updateUserRole(userId, newRole);
+      
+      if (response.success) {
+        // Update local state
+        setUsers(users.map(user => 
+          user.id === userId ? { ...user, role: newRole } : user
+        ));
+        
+        toast({
+          title: 'Role Updated',
+          description: `User role changed to ${newRole}`,
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: response.message || 'Failed to update user role',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('❌ Backend Admin - Error updating role:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update user role',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDeleteUser = async (userId: string, userName: string) => {
+    if (!confirm(`Are you sure you want to delete user "${userName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const response = await apiService.deleteUser(userId);
+      
+      if (response.success) {
+        // Remove user from local state
+        setUsers(users.filter(user => user.id !== userId));
+        
+        toast({
+          title: 'User Deleted',
+          description: `User "${userName}" has been deleted`,
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: response.message || 'Failed to delete user',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('❌ Backend Admin - Error deleting user:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete user',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -132,29 +198,57 @@ const BackendUsersManagement = () => {
                 {filteredUsers.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
                     <TableCell>
-                      <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
-                        {user.role === 'admin' ? (
-                          <>
-                            <Shield className="mr-1 h-3 w-3" />
-                            Admin
-                          </>
-                        ) : (
-                          <>
-                            <UserIcon className="mr-1 h-3 w-3" />
-                            User
-                          </>
+                      <div>
+                        <div>{user.email}</div>
+                        {user.mobile && (
+                          <div className="text-sm text-muted-foreground">
+                            📱 {user.mobile}
+                          </div>
                         )}
-                      </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={user.role}
+                        onValueChange={(newRole: 'user' | 'admin') => handleRoleChange(user.id, newRole)}
+                      >
+                        <SelectTrigger className="w-[120px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">
+                            <div className="flex items-center">
+                              <UserIcon className="mr-2 h-4 w-4" />
+                              User
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="admin">
+                            <div className="flex items-center">
+                              <Shield className="mr-2 h-4 w-4" />
+                              Admin
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                     <TableCell>
                       {new Date(user.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="default" className="bg-green-100 text-green-800">
-                        ✅ Verified
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="default" className="bg-green-100 text-green-800">
+                          ✅ Verified
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteUser(user.id, user.name)}
+                          className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

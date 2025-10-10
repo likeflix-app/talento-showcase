@@ -104,6 +104,21 @@ class ApiService {
   async getUserStats(): Promise<ApiResponse<UserStats>> {
     return this.fetchApi('/users/stats');
   }
+
+  // Update user role
+  async updateUserRole(userId: string, role: 'user' | 'admin'): Promise<ApiResponse<User>> {
+    return this.fetchApi(`/users/${userId}/role`, {
+      method: 'PATCH',
+      body: JSON.stringify({ role }),
+    });
+  }
+
+  // Delete user
+  async deleteUser(userId: string): Promise<ApiResponse<{ message: string }>> {
+    return this.fetchApi(`/users/${userId}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const apiService = new ApiService();

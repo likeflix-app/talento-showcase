@@ -21,7 +21,7 @@ const SimpleEmailVerification: React.FC = () => {
       console.log('🔍 Simple Verification - Token from URL:', token);
       
       if (!token) {
-        setMessage('No verification token found');
+        setMessage('Token di verifica non trovato');
         setIsSuccess(false);
         setIsLoading(false);
         return;
@@ -33,21 +33,21 @@ const SimpleEmailVerification: React.FC = () => {
         
         if (success) {
           setIsSuccess(true);
-          setMessage('Email verified successfully! You can now login.');
+          setMessage('Email verificata con successo! Ora puoi accedere.');
           
           toast({
-            title: '✅ Email Verified!',
-            description: 'Your email has been verified successfully. You can now login.',
+            title: '✅ Email Verificata!',
+            description: 'La tua email è stata verificata con successo. Ora puoi accedere.',
           });
           
           console.log('✅ Simple Verification - Email verification successful');
         } else {
           setIsSuccess(false);
-          setMessage('Invalid or expired verification token');
+          setMessage('Token di verifica non valido o scaduto');
           
           toast({
-            title: '❌ Verification Failed',
-            description: 'Invalid or expired verification token',
+            title: '❌ Verifica Fallita',
+            description: 'Token di verifica non valido o scaduto',
             variant: 'destructive',
           });
           
@@ -55,11 +55,11 @@ const SimpleEmailVerification: React.FC = () => {
         }
       } catch (error) {
         setIsSuccess(false);
-        setMessage('An error occurred during verification');
+        setMessage('Si è verificato un errore durante la verifica');
         
         toast({
-          title: '❌ Verification Error',
-          description: 'An error occurred during verification',
+          title: '❌ Errore di Verifica',
+          description: 'Si è verificato un errore durante la verifica',
           variant: 'destructive',
         });
         
@@ -76,35 +76,35 @@ const SimpleEmailVerification: React.FC = () => {
     navigate('/');
   };
 
-  const handleGoToTest = () => {
-    navigate('/simple-test');
+  const handleLogin = () => {
+    navigate('/?auth=login');
   };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-center">Email Verification</CardTitle>
+          <CardTitle className="text-center">Verifica Email</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {isLoading ? (
             <div className="text-center space-y-4">
               <Loader2 className="h-12 w-12 mx-auto animate-spin text-blue-600" />
-              <p>Verifying your email...</p>
+              <p>Verifica email in corso...</p>
             </div>
           ) : isSuccess ? (
             <div className="text-center space-y-4">
               <CheckCircle className="h-12 w-12 mx-auto text-green-600" />
               <div>
-                <h3 className="text-lg font-semibold text-green-800">Success!</h3>
+                <h3 className="text-lg font-semibold text-green-800">Successo!</h3>
                 <p className="text-gray-600">{message}</p>
               </div>
               <div className="space-y-2">
-                <Button onClick={handleGoToTest} className="w-full">
-                  Go to Test Page
+                <Button onClick={handleLogin} className="w-full">
+                  Accesso
                 </Button>
                 <Button onClick={handleGoHome} variant="outline" className="w-full">
-                  Go Home
+                  Pagina Iniziale
                 </Button>
               </div>
             </div>
@@ -112,15 +112,15 @@ const SimpleEmailVerification: React.FC = () => {
             <div className="text-center space-y-4">
               <XCircle className="h-12 w-12 mx-auto text-red-600" />
               <div>
-                <h3 className="text-lg font-semibold text-red-800">Verification Failed</h3>
+                <h3 className="text-lg font-semibold text-red-800">Verifica Fallita</h3>
                 <p className="text-gray-600">{message}</p>
               </div>
               <div className="space-y-2">
-                <Button onClick={handleGoToTest} variant="outline" className="w-full">
-                  Go to Test Page
+                <Button onClick={handleLogin} variant="outline" className="w-full">
+                  Accesso
                 </Button>
                 <Button onClick={handleGoHome} className="w-full">
-                  Go Home
+                  Pagina Iniziale
                 </Button>
               </div>
             </div>
