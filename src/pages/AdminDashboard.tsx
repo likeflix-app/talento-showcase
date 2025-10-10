@@ -18,19 +18,21 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  FileText
+  FileText,
+  ClipboardList
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import TalentsManagement from '@/components/admin/TalentsManagement';
 import BackendUsersManagement from '@/components/admin/BackendUsersManagement';
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
 import RequestsManagement from '@/components/admin/RequestsManagement';
+import TalentApplicationsManagement from '@/components/admin/TalentApplicationsManagement';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('users');
+  const [activeTab, setActiveTab] = useState('applications');
 
   const handleLogout = async () => {
     try {
@@ -107,10 +109,14 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="analytics" className="flex items-center space-x-2">
               <TrendingUp className="h-4 w-4" />
               <span>Analytics</span>
+            </TabsTrigger>
+            <TabsTrigger value="applications" className="flex items-center space-x-2">
+              <ClipboardList className="h-4 w-4" />
+              <span>Talent Apps</span>
             </TabsTrigger>
             <TabsTrigger value="requests" className="flex items-center space-x-2">
               <FileText className="h-4 w-4" />
@@ -128,6 +134,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="analytics" className="space-y-6">
             <AnalyticsDashboard />
+          </TabsContent>
+
+          <TabsContent value="applications" className="space-y-6">
+            <TalentApplicationsManagement />
           </TabsContent>
 
           <TabsContent value="requests" className="space-y-6">

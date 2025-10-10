@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { submitCompleteTalentApplication, TalentApplicationData } from "@/services/talentApplication";
 
 // Italian provinces and Swiss Canton Ticino districts
 const ITALIAN_PROVINCES = [
@@ -166,6 +167,7 @@ const TalentApplication = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<TalentFormData>({
     email: user?.email || "",
     bio: "",
@@ -281,7 +283,7 @@ const TalentApplication = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.termsAccepted) {
@@ -293,17 +295,69 @@ const TalentApplication = () => {
       return;
     }
 
-    // TODO: Submit form data to backend
-    console.log("Form submitted:", formData);
-    
-    toast({
-      title: "Candidatura inviata!",
-      description: "Grazie per aver inviato la tua candidatura. Ti contatteremo presto!",
-    });
+    try {
+      setLoading(true);
 
-    setTimeout(() => {
-      navigate("/");
-    }, 2000);
+      // Prepare application data
+      const applicationData: TalentApplicationData = {
+        // Personal Information
+        fullName: formData.fullName,
+        email: formData.email,
+        birthYear: parseInt(formData.birthYear),
+        city: formData.city,
+        nickname: formData.nickname || undefined,
+        phone: formData.phone,
+        bio: formData.bio || undefined,
+        
+        // Social Information
+        socialChannels: formData.socialChannels,
+        socialLinks: formData.socialLinks,
+        contentCategories: formData.contentCategories,
+        
+        // Availability
+        availableForProducts: formData.availableForProducts,
+        shippingAddress: formData.shippingAddress || undefined,
+        availableForReels: formData.availableForReels,
+        availableNext3Months: formData.availableNext3Months,
+        availabilityPeriod: formData.availabilityPeriod || undefined,
+        
+        // Experience
+        collaboratedAgencies: formData.collaboratedAgencies,
+        agenciesList: formData.agenciesList || undefined,
+        collaboratedBrands: formData.collaboratedBrands,
+        brandsList: formData.brandsList || undefined,
+        
+        // Fiscal Information
+        hasVAT: formData.hasVAT,
+        paymentMethod: formData.paymentMethod,
+        termsAccepted: formData.termsAccepted,
+        
+        // Photos will be handled by the service
+        mediaKitUrls: [] // Will be populated by uploadMediaKit in the service
+      };
+
+      // Submit complete application (photos + data) using service
+      await submitCompleteTalentApplication(applicationData, formData.mediaKit);
+      
+      toast({
+        title: "Candidatura inviata!",
+        description: "Grazie per aver inviato la tua candidatura. Ti contatteremo presto!",
+      });
+
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+
+    } catch (error) {
+      console.error('Application submission error:', error);
+      toast({
+        title: "Errore nell'invio",
+        description: error instanceof Error ? error.message : "Si è verificato un errore. Riprova più tardi.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCheckboxChange = (category: string, value: boolean, field: keyof TalentFormData) => {
@@ -957,11 +1011,20 @@ const TalentApplication = () => {
                 ) : (
                   <Button
                     type="submit"
-                    disabled={!formData.termsAccepted}
+                    disabled={!formData.termsAccepted || loading}
                     className="bg-gradient-to-r from-primary to-accent"
                   >
-                    <Check className="mr-2 h-4 w-4" />
-                    Invia Candidatura
+                    {loading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Invio in corso...
+                      </>
+                    ) : (
+                      <>
+                        <Check className="mr-2 h-4 w-4" />
+                        Invia Candidatura
+                      </>
+                    )}
                   </Button>
                 )}
               </div>
