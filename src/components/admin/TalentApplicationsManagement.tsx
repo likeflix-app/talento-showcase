@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { getTalentApplications, updateTalentApplicationStatus, TalentApplication } from '@/services/talentApplication';
+import { talentService } from '@/services/talent';
 
 const TalentApplicationsManagement = () => {
   const [applications, setApplications] = useState<TalentApplication[]>([]);
@@ -108,8 +109,18 @@ const TalentApplicationsManagement = () => {
 
       toast({
         title: `Application ${newStatus === 'verified' ? 'approved' : 'rejected'}`,
-        description: `Talent application has been ${newStatus === 'verified' ? 'approved' : 'rejected'}.`,
+        description: `Talent application has been ${newStatus === 'verified' ? 'approved and automatically added to talent list' : 'rejected'}.`,
       });
+
+      // Show additional success message for approved talents
+      if (newStatus === 'verified') {
+        setTimeout(() => {
+          toast({
+            title: "🎉 New Talent Added!",
+            description: `${result.application.fullName} has been automatically added to the talent showcase.`,
+          });
+        }, 1000);
+      }
 
       setIsReviewDialogOpen(false);
       setSelectedApplication(null);

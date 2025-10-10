@@ -1,20 +1,31 @@
 // Talent Application API Service
+import { talentEmailService } from './talentEmailService';
+import { talentService } from './talent';
+
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://backend-isadora.onrender.com' 
   : 'http://localhost:3001';
 
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
+  const user = localStorage.getItem('currentUser');
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+  const userData = JSON.parse(user);
   return {
-    'Authorization': `Bearer ${token}`,
+    'Authorization': `Bearer ${userData.id}`, // Using user ID as token for now
     'Content-Type': 'application/json'
   };
 };
 
 const getAuthHeadersForFormData = () => {
-  const token = localStorage.getItem('token');
+  const user = localStorage.getItem('currentUser');
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+  const userData = JSON.parse(user);
   return {
-    'Authorization': `Bearer ${token}`
+    'Authorization': `Bearer ${userData.id}` // Using user ID as token for now
   };
 };
 
@@ -104,7 +115,25 @@ export const submitTalentApplication = async (data: TalentApplicationData): Prom
     throw new Error(errorData.message || 'Failed to submit application');
   }
 
-  return response.json();
+  const application = await response.json();
+  
+  // Send confirmation email to user
+  try {
+    await talentEmailService.sendApplicationSubmittedEmail(application);
+    console.log('✅ Application confirmation email sent');
+  } catch (error) {
+    console.error('❌ Failed to send confirmation email:', error);
+  }
+  
+  // Send notification email to admin
+  try {
+    await talentEmailService.sendAdminNotificationEmail(application);
+    console.log('✅ Admin notification email sent');
+  } catch (error) {
+    console.error('❌ Failed to send admin notification email:', error);
+  }
+
+  return application;
 };
 
 export const getTalentApplications = async (): Promise<{ applications: TalentApplication[] }> => {
@@ -162,7 +191,26 @@ export const updateTalentApplicationStatus = async (
     throw new Error(errorData.message || 'Failed to update application status');
   }
 
-  return response.json();
+  const result = await response.json();
+  
+  // Send appropriate email based on status
+  try {
+    if (status === 'verified') {
+      await talentEmailService.sendApplicationApprovedEmail(result.application);
+      console.log('✅ Application approved email sent');
+      
+      // Automatically add approved talent to the talent list
+      await addApprovedTalentToList(result.application);
+      console.log('✅ Approved talent added to talent list');
+    } else if (status === 'rejected') {
+      await talentEmailService.sendApplicationRejectedEmail(result.application);
+      console.log('✅ Application rejected email sent');
+    }
+  } catch (error) {
+    console.error('❌ Failed to send status update email:', error);
+  }
+
+  return result;
 };
 
 export const deleteTalentApplication = async (id: string): Promise<void> => {
@@ -192,6 +240,57 @@ export const getTalentStats = async (): Promise<{
   }
 
   return response.json();
+};
+
+// Convert approved talent application to talent
+const addApprovedTalentToList = async (application: TalentApplication): Promise<void> => {
+  try {
+    // Map application categories to talent categories
+    const categoryMapping: { [key: string]: string } = {
+      'Fitness': 'Sport & Fitness',
+      'Food': 'Alta Cucina',
+      'Moda': 'Fashion & Style',
+      'Benessere': 'Wellness & Yoga',
+      'Tech': 'Digital Marketing',
+      'Arte': 'Fashion & Style',
+      'Beauty': 'Fashion & Style',
+      'Comicità': 'Cinema & Regia',
+      'Educazione': 'Business Strategy',
+      'Gaming': 'Digital Marketing',
+      'Genitorialità': 'Wellness & Yoga',
+      'Lifestyle': 'Fashion & Style',
+      'Medicina Estetica': 'Wellness & Yoga',
+      'Musica': 'Cinema & Regia',
+      'Viaggi': 'Fashion & Style'
+    };
+
+    // Get the first category and map it
+    const primaryCategory = application.contentCategories[0] || 'Lifestyle';
+    const mappedCategory = categoryMapping[primaryCategory] || 'Fashion & Style';
+
+    // Use the first media kit photo as the talent image, or a default
+    const talentImage = application.mediaKitUrls.length > 0 
+      ? application.mediaKitUrls[0] 
+      : '/src/assets/talent-default.jpg';
+
+    // Create talent data from application
+    const talentData = {
+      name: application.fullName,
+      category: mappedCategory,
+      price: application.hasVAT === 'Si' ? '€200/h' : '€150/h', // Higher price if they have VAT
+      image: talentImage,
+      description: application.bio || `Talento specializzato in ${primaryCategory.toLowerCase()}. ${application.socialChannels.join(', ')} con esperienza in contenuti di qualità.`,
+      rating: 4.5, // Default rating for new talents
+      isActive: true,
+    };
+
+    // Add to talent list
+    await talentService.createTalent(talentData);
+    console.log(`✅ Talent ${application.fullName} added to talent list`);
+  } catch (error) {
+    console.error('❌ Failed to add approved talent to list:', error);
+    // Don't throw error to avoid breaking the approval flow
+  }
 };
 
 // Complete flow function
