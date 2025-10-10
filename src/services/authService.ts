@@ -114,23 +114,69 @@ class AuthService {
         throw new Error('Invalid email or password');
       }
 
-      // Create admin user object (local admin - no JWT needed)
-      const adminUser: User = {
-        id: 'admin-001',
-        email: ADMIN_CONFIG.email,
-        name: ADMIN_CONFIG.name,
-        role: ADMIN_CONFIG.role,
-        createdAt: new Date().toISOString(),
-        emailVerified: true,
-      };
+      // Try to login admin through backend to get proper JWT token
+      try {
+        const adminLoginResponse = await fetch('https://backend-isadora.onrender.com/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: ADMIN_CONFIG.email,
+            password: ADMIN_CONFIG.password
+          })
+        });
 
-      this.currentUser = adminUser;
-      localStorage.setItem('currentUser', JSON.stringify(adminUser));
-      // Don't store JWT token for admin - use special admin token
-      localStorage.setItem('authToken', 'admin-token');
-      console.log('✅ Auth - Admin login successful:', adminUser);
-      
-      return adminUser;
+        if (adminLoginResponse.ok) {
+          const adminLoginData = await adminLoginResponse.json();
+          console.log('✅ Auth - Admin backend login successful:', adminLoginData);
+          
+          const token = adminLoginData.data.token;
+          const userData = adminLoginData.data.user;
+          
+          // Store JWT token
+          localStorage.setItem('authToken', token);
+          
+          // Create admin user object
+          const adminUser: User = {
+            id: userData.id || userData._id || 'admin-001',
+            email: userData.email || ADMIN_CONFIG.email,
+            name: userData.name || userData.fullName || ADMIN_CONFIG.name,
+            role: userData.role || 'admin',
+            createdAt: userData.createdAt || new Date().toISOString(),
+            emailVerified: true,
+          };
+
+          this.currentUser = adminUser;
+          localStorage.setItem('currentUser', JSON.stringify(adminUser));
+          console.log('✅ Auth - Admin login successful with backend JWT:', adminUser);
+          
+          return adminUser;
+        } else {
+          console.log('⚠️ Admin not found in backend, using local admin');
+          throw new Error('Admin not in backend system');
+        }
+      } catch (error) {
+        console.log('⚠️ Backend admin login failed, using local admin fallback');
+        
+        // Fallback to local admin if backend doesn't have admin user
+        const adminUser: User = {
+          id: 'admin-001',
+          email: ADMIN_CONFIG.email,
+          name: ADMIN_CONFIG.name,
+          role: ADMIN_CONFIG.role,
+          createdAt: new Date().toISOString(),
+          emailVerified: true,
+        };
+
+        this.currentUser = adminUser;
+        localStorage.setItem('currentUser', JSON.stringify(adminUser));
+        // Use a special admin token that backend should recognize
+        localStorage.setItem('authToken', 'admin-backend-token');
+        console.log('✅ Auth - Admin login successful (local fallback):', adminUser);
+        
+        return adminUser;
+      }
     }
     
     // For regular users, use JWT authentication with backend
