@@ -302,7 +302,8 @@ const BackendUsersManagement = () => {
         </div>
       )}
 
-      {/* Backend Status */}
+      {/* Backend Status - Hidden */}
+      {/* 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -321,6 +322,7 @@ const BackendUsersManagement = () => {
           </div>
         </CardContent>
       </Card>
+      */}
     </div>
   );
 };
