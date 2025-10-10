@@ -24,11 +24,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   });
 
   useEffect(() => {
-    // Check if user is already logged in
+    // Check if user is already logged in with valid token
     const user = authService.getCurrentUser();
+    const isAuthenticated = authService.isAuthenticated();
     setState({
       user,
-      isAuthenticated: !!user,
+      isAuthenticated,
       isLoading: false,
     });
   }, []);
@@ -39,7 +40,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const user = await authService.login(credentials);
       setState({
         user,
-        isAuthenticated: true,
+        isAuthenticated: authService.isAuthenticated(),
         isLoading: false,
       });
     } catch (error) {

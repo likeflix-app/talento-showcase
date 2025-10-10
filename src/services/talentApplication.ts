@@ -2,30 +2,31 @@
 import { talentEmailService } from './talentEmailService';
 import { talentService } from './talent';
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://backend-isadora.onrender.com' 
-  : 'http://localhost:3001';
+// Always use production backend for talent applications
+const API_BASE_URL = 'https://backend-isadora.onrender.com';
 
 const getAuthHeaders = () => {
-  const user = localStorage.getItem('currentUser');
-  if (!user) {
-    throw new Error('User not authenticated');
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    throw new Error('User not authenticated - please login first');
   }
-  const userData = JSON.parse(user);
+  
+  console.log('🔐 Using JWT token:', token.substring(0, 20) + '...');
+  
   return {
-    'Authorization': `Bearer ${userData.id}`, // Using user ID as token for now
+    'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
   };
 };
 
 const getAuthHeadersForFormData = () => {
-  const user = localStorage.getItem('currentUser');
-  if (!user) {
-    throw new Error('User not authenticated');
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    throw new Error('User not authenticated - please login first');
   }
-  const userData = JSON.parse(user);
+  
   return {
-    'Authorization': `Bearer ${userData.id}` // Using user ID as token for now
+    'Authorization': `Bearer ${token}`
   };
 };
 
@@ -36,18 +37,30 @@ export const uploadMediaKit = async (files: File[]): Promise<{ urls: string[] }>
     formData.append('mediaKit', file);
   });
 
-  const response = await fetch(`${API_BASE_URL}/api/upload/media-kit`, {
+  const url = `${API_BASE_URL}/api/upload/media-kit`;
+  const headers = getAuthHeadersForFormData();
+  
+  console.log('📤 Uploading files to:', url);
+  console.log('📁 Files to upload:', files.map(f => ({ name: f.name, size: f.size, type: f.type })));
+  console.log('🔐 Auth headers:', headers);
+
+  const response = await fetch(url, {
     method: 'POST',
     body: formData,
-    headers: getAuthHeadersForFormData()
+    headers
   });
 
+  console.log('📡 Upload response status:', response.status);
+
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json().catch(() => ({ message: 'Unknown upload error' }));
+    console.error('❌ Upload failed:', errorData);
     throw new Error(errorData.message || 'Failed to upload photos');
   }
 
-  return response.json();
+  const result = await response.json();
+  console.log('✅ Files uploaded successfully:', result);
+  return result;
 };
 
 // Talent Application APIs
@@ -104,18 +117,38 @@ export interface TalentApplication extends TalentApplicationData {
 }
 
 export const submitTalentApplication = async (data: TalentApplicationData): Promise<TalentApplication> => {
-  const response = await fetch(`${API_BASE_URL}/api/talent/applications`, {
+  const url = `${API_BASE_URL}/api/talent/applications`;
+  const headers = getAuthHeaders();
+  
+  console.log('🚀 Submitting talent application to:', url);
+  console.log('📋 Application data:', data);
+  console.log('🔐 Auth headers:', headers);
+  
+  const response = await fetch(url, {
     method: 'POST',
-    headers: getAuthHeaders(),
+    headers,
     body: JSON.stringify(data)
   });
 
+  console.log('📡 Response status:', response.status);
+  console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
+
   if (!response.ok) {
-    const errorData = await response.json();
+    // Handle authentication errors specifically
+    if (response.status === 403) {
+      console.error('❌ Authentication failed - token invalid or expired');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('currentUser');
+      throw new Error('Session expired. Please login again.');
+    }
+    
+    const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+    console.error('❌ Submission failed:', errorData);
     throw new Error(errorData.message || 'Failed to submit application');
   }
 
   const application = await response.json();
+  console.log('✅ Application submitted successfully:', application);
   
   // Send confirmation email to user
   try {
@@ -142,6 +175,11 @@ export const getTalentApplications = async (): Promise<{ applications: TalentApp
   });
 
   if (!response.ok) {
+    if (response.status === 403) {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('currentUser');
+      throw new Error('Session expired. Please login again.');
+    }
     throw new Error('Failed to fetch applications');
   }
 
@@ -187,6 +225,11 @@ export const updateTalentApplicationStatus = async (
   });
 
   if (!response.ok) {
+    if (response.status === 403) {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('currentUser');
+      throw new Error('Session expired. Please login again.');
+    }
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to update application status');
   }
@@ -301,8 +344,15 @@ export const submitCompleteTalentApplication = async (
   // Step 1: Upload photos first (if any)
   let mediaKitUrls: string[] = [];
   if (files.length > 0) {
-    const uploadResult = await uploadMediaKit(files);
-    mediaKitUrls = uploadResult.urls;
+    try {
+      const uploadResult = await uploadMediaKit(files);
+      mediaKitUrls = uploadResult.urls;
+      console.log('✅ Files uploaded successfully');
+    } catch (error) {
+      console.warn('⚠️ File upload failed, proceeding without files:', error);
+      // Continue with empty mediaKitUrls if upload fails
+      mediaKitUrls = [];
+    }
   }
 
   // Step 2: Submit complete application with photo URLs
