@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle, XCircle, Loader2, ArrowLeft, Mail, Sparkles } from 'lucide-react';
-import { emailVerificationService } from '@/services/emailVerification';
+import { authService } from '@/services/authService';
 import { useToast } from '@/hooks/use-toast';
 
 const EmailVerification: React.FC = () => {
@@ -30,22 +30,28 @@ const EmailVerification: React.FC = () => {
       }
 
       try {
-        const result = await emailVerificationService.verifyEmail(token);
-        setIsSuccess(result.success);
-        setMessage(result.message);
+        console.log('🔍 Email Verification - Token from URL:', token);
+        console.log('🔍 Email Verification - Attempting verification...');
         
-        if (result.success) {
+        const result = await authService.verifyEmail(token);
+        setIsSuccess(result);
+        setMessage(result ? 'Email verificata con successo! User inviato al backend.' : 'Token di verifica non valido o scaduto');
+        
+        if (result) {
           toast({
             title: 'Email verificata!',
-            description: 'Il tuo account è stato verificato con successo. Ora puoi accedere.',
+            description: 'Il tuo account è stato verificato e salvato nel backend. Ora puoi accedere.',
           });
+          
+          console.log('✅ Email Verification - User sent to backend successfully');
           
           // Clear any existing user session to ensure fresh login
           localStorage.removeItem('user');
+          localStorage.removeItem('currentUser');
         } else {
           toast({
             title: 'Verifica fallita',
-            description: result.message,
+            description: 'Token di verifica non valido o scaduto',
             variant: 'destructive',
           });
         }

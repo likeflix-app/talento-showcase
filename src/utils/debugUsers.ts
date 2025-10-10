@@ -6,12 +6,12 @@ export const debugUsers = () => {
   console.log('🔍 DEBUGGING USER SYSTEM');
   console.log('========================');
   
-  // Check localStorage users
+  // Check localStorage users (legacy - now using backend)
   const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-  console.log('📊 Total users in localStorage:', allUsers.length);
-  console.log('👥 All users:', allUsers);
+  console.log('📊 Total users in localStorage (legacy):', allUsers.length);
+  console.log('👥 All users (legacy):', allUsers);
   
-  // Check verified users
+  // Check verified users (legacy)
   const verifiedUsers = allUsers.filter(user => user.emailVerified === true);
   console.log('✅ Verified users:', verifiedUsers.length);
   console.log('📋 Verified users list:', verifiedUsers);

@@ -4,12 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { simpleAuthService, SimpleRegistrationData } from '@/services/simpleAuth';
-import { simpleUserStorage } from '@/services/simpleUserStorage';
+import { authService, RegistrationData } from '@/services/authService';
 
 const SimpleTestPage = () => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState<SimpleRegistrationData>({
+  const [formData, setFormData] = useState<RegistrationData>({
     email: '',
     name: '',
     password: 'password'
@@ -17,7 +16,7 @@ const SimpleTestPage = () => {
 
   const handleRegister = async () => {
     try {
-      const user = await simpleAuthService.register(formData);
+      const user = await authService.register(formData);
       toast({
         title: 'Registration Successful!',
         description: `User ${user.name} registered. Check your email for verification link.`,
@@ -36,7 +35,7 @@ const SimpleTestPage = () => {
 
   const handleVerifyTest = () => {
     // Get the latest unverified user for testing
-    const allUsers = simpleUserStorage.getAllUsers();
+    const allUsers: any[] = []; // No longer using localStorage storage
     const unverifiedUsers = allUsers.filter(user => !user.emailVerified);
     
     if (unverifiedUsers.length > 0) {
@@ -68,8 +67,8 @@ const SimpleTestPage = () => {
   };
 
   const handleShowAllUsers = () => {
-    const allUsers = simpleUserStorage.getAllUsers();
-    const verifiedUsers = simpleUserStorage.getVerifiedUsers();
+    const allUsers: any[] = []; // No longer using localStorage storage
+    const verifiedUsers: any[] = []; // No longer using localStorage storage
     
     console.log('🔍 ALL USERS:', allUsers);
     console.log('✅ VERIFIED USERS:', verifiedUsers);
@@ -166,13 +165,13 @@ const SimpleTestPage = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
                 <div className="text-2xl font-bold">
-                  {simpleUserStorage.getAllUsers().length}
+                  {0}
                 </div>
                 <div className="text-sm text-muted-foreground">Total Users</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">
-                  {simpleUserStorage.getVerifiedUsers().length}
+                  {0}
                 </div>
                 <div className="text-sm text-muted-foreground">Verified Users</div>
               </div>

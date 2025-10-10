@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { simpleAuthService } from '@/services/simpleAuth';
+import { authService } from '@/services/authService';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
 const SimpleEmailVerification: React.FC = () => {
@@ -29,7 +29,7 @@ const SimpleEmailVerification: React.FC = () => {
 
       try {
         console.log('🚀 Simple Verification - Attempting verification...');
-        const success = await simpleAuthService.verifyEmail(token);
+        const success = await authService.verifyEmail(token);
         
         if (success) {
           setIsSuccess(true);

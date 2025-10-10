@@ -1,5 +1,5 @@
 import { User, LoginCredentials, RegisterCredentials } from '@/types/auth';
-import { emailVerificationService } from './emailVerification';
+// import { emailVerificationService } from './emailVerification'; // Removed - using backend API now
 
 // Mock users database (in a real app, this would be a backend API)
 export const mockUsers: User[] = [
@@ -113,10 +113,10 @@ export class AuthService {
     // localStorage.setItem('user', JSON.stringify(newUser)); // REMOVED
 
     // Generate verification token and send email
-    await emailVerificationService.generateVerificationToken(newUser.id);
+    // await emailVerificationService.generateVerificationToken(newUser.id); // Removed - using backend API now
     
     // Send verification email immediately after registration
-    await emailVerificationService.resendVerificationEmail(newUser.id);
+    // await emailVerificationService.resendVerificationEmail(newUser.id); // Removed - using backend API now
     
     // Return user but they are NOT logged in
     return newUser;

@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, User, Mail, Lock, Eye, EyeOff, Phone } from 'lucide-react';
 import EmailVerificationModal from './EmailVerificationModal';
 import { User as UserType } from '@/types/auth';
-import { simpleAuthService, SimpleRegistrationData } from '@/services/simpleAuth';
+import { authService, RegistrationData } from '@/services/authService';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -40,19 +40,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Use simple auth system for login
-      const simpleUser = await simpleAuthService.login(loginForm);
-      
-      // Convert to UserType for compatibility
-      const user: UserType = {
-        id: simpleUser.id,
-        name: simpleUser.name,
-        email: simpleUser.email,
-        role: simpleUser.role,
-        createdAt: simpleUser.createdAt,
-        emailVerified: simpleUser.emailVerified,
-        mobile: '' // Simple auth doesn't store mobile
-      };
+      // Use new auth service for login
+      const user = await authService.login(loginForm);
       
       // Update the auth context with the logged in user
       localStorage.setItem('user', JSON.stringify(user));
@@ -67,17 +56,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       // Reload the page to update the auth context
       window.location.reload();
     } catch (error) {
-      if (error instanceof Error && error.message === 'EMAIL_NOT_VERIFIED') {
-        // Find the unverified user
-        const allUsers = JSON.parse(localStorage.getItem('talento_users') || '[]');
-        const user = allUsers.find((u: any) => u.email === loginForm.email);
-        if (user) {
-          setUnverifiedUser(user);
-          setShowEmailVerification(true);
-          return;
-        }
-      }
-      
       toast({
         title: 'Login failed',
         description: error instanceof Error ? error.message : 'An error occurred',
@@ -89,23 +67,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Use simple auth system for registration
-      const simpleUser = await simpleAuthService.register({
+      // Use new auth service for registration
+      const user = await authService.register({
         name: registerForm.name,
         email: registerForm.email,
-        password: registerForm.password
-      });
-      
-      // Convert to UserType for compatibility
-      const user: UserType = {
-        id: simpleUser.id,
-        name: simpleUser.name,
-        email: simpleUser.email,
-        role: simpleUser.role,
-        createdAt: simpleUser.createdAt,
-        emailVerified: simpleUser.emailVerified,
+        password: registerForm.password,
         mobile: registerForm.mobile
-      };
+      });
       
       toast({
         title: 'Registrazione completata!',
@@ -113,7 +81,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       });
       
       // Show email verification modal
-      setUnverifiedUser(user);
+      setUnverifiedUser(user as UserType);
       setShowEmailVerification(true);
       
       setRegisterForm({ name: '', email: '', mobile: '', password: '', confirmPassword: '' });
@@ -209,7 +177,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             </form>
             
             <div className="text-center text-sm text-muted-foreground">
-              Credenziali demo: demo@example.com / password
+              <div>Demo: demo@example.com / password</div>
+              <div>Admin: admin@talento.com / admin123</div>
             </div>
           </TabsContent>
           

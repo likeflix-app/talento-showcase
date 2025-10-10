@@ -22,10 +22,9 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import TalentsManagement from '@/components/admin/TalentsManagement';
-import SimpleUsersManagement from '@/components/admin/SimpleUsersManagement';
+import BackendUsersManagement from '@/components/admin/BackendUsersManagement';
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
 import RequestsManagement from '@/components/admin/RequestsManagement';
-import UserResetUtility from '@/components/admin/UserResetUtility';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -139,10 +138,9 @@ const AdminDashboard = () => {
             <TalentsManagement />
           </TabsContent>
 
-          <TabsContent value="users" className="space-y-6">
-            <SimpleUsersManagement />
-            <UserResetUtility />
-          </TabsContent>
+        <TabsContent value="users" className="space-y-6">
+          <BackendUsersManagement />
+        </TabsContent>
         </Tabs>
       </main>
     </div>
