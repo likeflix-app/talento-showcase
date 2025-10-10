@@ -5,6 +5,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Mail, CheckCircle, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { authService } from '@/services/authService';
+import { emailService } from '@/services/emailService';
 import { User } from '@/types/auth';
 
 interface EmailVerificationModalProps {
@@ -35,13 +36,28 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
       // Generate verification URL
       const verificationUrl = `${window.location.origin}/verify-email?token=${token}`;
       
-      // Show alert with verification link (mock email)
-      alert(`Verification email resent to ${user.email}!\n\nClick this link to verify:\n${verificationUrl}`);
+      // Store user data temporarily for verification (same as in authService)
+      localStorage.setItem(`pending_user_${user.id}`, JSON.stringify(user));
       
-      toast({
-        title: 'Email inviato!',
-        description: 'Controlla la tua casella di posta elettronica per il link di verifica.',
-      });
+      // Send actual verification email
+      const result = await emailService.sendVerificationEmail(
+        user.email,
+        user.name,
+        verificationUrl
+      );
+      
+      if (result.success) {
+        toast({
+          title: 'Email inviato!',
+          description: 'Controlla la tua casella di posta elettronica per il link di verifica.',
+        });
+      } else {
+        toast({
+          title: 'Errore',
+          description: 'Si è verificato un errore durante l\'invio dell\'email.',
+          variant: 'destructive',
+        });
+      }
     } catch (error) {
       toast({
         title: 'Errore',

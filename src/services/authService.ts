@@ -4,6 +4,7 @@
  */
 
 import { apiService, User } from './api';
+import { emailService } from './emailService';
 
 export interface RegistrationData {
   email: string;
@@ -49,8 +50,8 @@ class AuthService {
     const token = this.generateToken();
     this.storeVerificationToken(newUser.id, token);
 
-    // Send verification email (mock)
-    this.sendVerificationEmail(newUser.email, token, newUser);
+    // Send verification email
+    await this.sendVerificationEmail(newUser.email, token, newUser);
 
     return newUser;
   }
@@ -224,19 +225,32 @@ class AuthService {
     console.log('🗑️ Auth - Pending user data cleared:', userId);
   }
 
-  // Send verification email (mock)
-  private sendVerificationEmail(email: string, token: string, userData: User): void {
+  // Send verification email
+  private async sendVerificationEmail(email: string, token: string, userData: User): Promise<void> {
     const verificationUrl = `${window.location.origin}/verify-email?token=${token}`;
     
-    console.log('📧 Auth - Verification email would be sent to:', email);
+    console.log('📧 Auth - Sending verification email to:', email);
     console.log('🔗 Auth - Verification URL:', verificationUrl);
     
     // Store user data temporarily for verification
     this.storePendingUser(userData.id, userData);
     
-    // In a real app, send actual email here
-    // For now, just log the URL
-    alert(`Verification email sent to ${email}!\n\nClick this link to verify:\n${verificationUrl}`);
+    try {
+      // Send actual verification email
+      const result = await emailService.sendVerificationEmail(
+        email,
+        userData.name,
+        verificationUrl
+      );
+      
+      if (result.success) {
+        console.log('✅ Auth - Verification email sent successfully');
+      } else {
+        console.error('❌ Auth - Failed to send verification email:', result.message);
+      }
+    } catch (error) {
+      console.error('❌ Auth - Error sending verification email:', error);
+    }
   }
 }
 
