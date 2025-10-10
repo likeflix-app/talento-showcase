@@ -11,6 +11,15 @@ const getAuthHeaders = () => {
     throw new Error('User not authenticated - please login first');
   }
   
+  // Special handling for admin token
+  if (token === 'admin-token') {
+    console.log('🔐 Using admin token');
+    return {
+      'Authorization': `Bearer admin-token`,
+      'Content-Type': 'application/json'
+    };
+  }
+  
   console.log('🔐 Using JWT token:', token.substring(0, 20) + '...');
   
   return {
@@ -23,6 +32,13 @@ const getAuthHeadersForFormData = () => {
   const token = localStorage.getItem('authToken');
   if (!token) {
     throw new Error('User not authenticated - please login first');
+  }
+  
+  // Special handling for admin token
+  if (token === 'admin-token') {
+    return {
+      'Authorization': `Bearer admin-token`
+    };
   }
   
   return {
@@ -136,10 +152,17 @@ export const submitTalentApplication = async (data: TalentApplicationData): Prom
   if (!response.ok) {
     // Handle authentication errors specifically
     if (response.status === 403) {
+      const token = localStorage.getItem('authToken');
       console.error('❌ Authentication failed - token invalid or expired');
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('currentUser');
-      throw new Error('Session expired. Please login again.');
+      
+      // Only clear tokens if not admin (admin doesn't use JWT)
+      if (token !== 'admin-token') {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        throw new Error('Session expired. Please login again.');
+      } else {
+        throw new Error('Access denied. Admin token not accepted by backend.');
+      }
     }
     
     const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
@@ -176,9 +199,14 @@ export const getTalentApplications = async (): Promise<{ applications: TalentApp
 
   if (!response.ok) {
     if (response.status === 403) {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('currentUser');
-      throw new Error('Session expired. Please login again.');
+      const token = localStorage.getItem('authToken');
+      if (token !== 'admin-token') {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        throw new Error('Session expired. Please login again.');
+      } else {
+        throw new Error('Access denied. Admin token not accepted by backend.');
+      }
     }
     throw new Error('Failed to fetch applications');
   }
@@ -226,9 +254,14 @@ export const updateTalentApplicationStatus = async (
 
   if (!response.ok) {
     if (response.status === 403) {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('currentUser');
-      throw new Error('Session expired. Please login again.');
+      const token = localStorage.getItem('authToken');
+      if (token !== 'admin-token') {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        throw new Error('Session expired. Please login again.');
+      } else {
+        throw new Error('Access denied. Admin token not accepted by backend.');
+      }
     }
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to update application status');

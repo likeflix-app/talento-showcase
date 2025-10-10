@@ -105,6 +105,35 @@ class AuthService {
   async login(credentials: LoginCredentials): Promise<User> {
     console.log('🔍 Auth - Login attempt for:', credentials.email);
     
+    // Check if this is the admin user first
+    if (credentials.email === ADMIN_CONFIG.email) {
+      console.log('🔍 Auth - Admin login attempt');
+      
+      if (credentials.password !== ADMIN_CONFIG.password) {
+        console.log('❌ Auth - Invalid admin password');
+        throw new Error('Invalid email or password');
+      }
+
+      // Create admin user object (local admin - no JWT needed)
+      const adminUser: User = {
+        id: 'admin-001',
+        email: ADMIN_CONFIG.email,
+        name: ADMIN_CONFIG.name,
+        role: ADMIN_CONFIG.role,
+        createdAt: new Date().toISOString(),
+        emailVerified: true,
+      };
+
+      this.currentUser = adminUser;
+      localStorage.setItem('currentUser', JSON.stringify(adminUser));
+      // Don't store JWT token for admin - use special admin token
+      localStorage.setItem('authToken', 'admin-token');
+      console.log('✅ Auth - Admin login successful:', adminUser);
+      
+      return adminUser;
+    }
+    
+    // For regular users, use JWT authentication with backend
     try {
       // Login to backend to get JWT token
       const loginResponse = await fetch('https://backend-isadora.onrender.com/api/auth/login', {
